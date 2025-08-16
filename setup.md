@@ -25,3 +25,9 @@ and then clone the git config
 ```bash
 git clone <https://the.repo.....>
 ```
+
+finally, open Neovim with the following command
+
+```bash
+nvim
+```
