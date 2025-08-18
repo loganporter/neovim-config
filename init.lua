@@ -15,3 +15,4 @@ vim.g.maplocalleader = "\\"
 vim.keymap.set("n", "<leader>w", ":w<CR>", { desc = "Save" })
 
 require("config.lazy")
+require("config.keymaps")
