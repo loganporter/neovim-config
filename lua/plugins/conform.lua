@@ -4,7 +4,16 @@ return {
   cmd = { "ConformInfo" },
   opts = {
     formatters_by_ft = {
-      markdown = { "prettierd" }
+      javascript = { "prettier" },
+      typescript = { "prettier" },
+      javascriptreact = { "prettier" },
+      typescriptreact = { "prettier" },
+      css = { "prettier" },
+      scss = { "prettier" },
+      html = { "prettier" },
+      json = { "prettier" },
+      yaml = { "prettier" },
+      markdown = { "prettier" }
     },
     -- Set default options
     default_format_ops = {
@@ -12,7 +21,8 @@ return {
     },
     -- Set up format-on-save
     format_on_save = {
-      timeout_ms = 500
+      timeout_ms = 500,
+      lsp_fallback = true,
     }
   }
 }

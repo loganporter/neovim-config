@@ -27,6 +27,32 @@ return {
     require("fidget").setup({})
     require("mason").setup()
 
+    -- Configure diagnostics
+    vim.diagnostic.config({
+      virtual_text = true,
+      signs = true,
+      underline = true,
+      update_in_insert = false,
+      severity_sort = true,
+      float = {
+        focusable = false,
+        style = "minimal",
+        border = "rounded",
+      }
+    })
+
+    -- Diagnostic signs
+    local signs = {
+        Error = " ",
+        Warn = " ",
+        Hint = " ",
+        Info = " ",
+    }
+    for type, icon in pairs(signs) do
+        local hl = "DiagnosticSign" .. type
+        vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+    end
+
     require('mason-lspconfig').setup({
       ensure_installed = {
         "tsserver",
