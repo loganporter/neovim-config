@@ -1,11 +1,10 @@
 -- Set some basic options
 vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.tabstop = 4
-vim.opt.shiftwidth = 4
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.opt.autoindent = true
-vim.opt.cursorline = true
+vim.opt.guifont = "Menlo Regular for Powerlines:h14"
 
 -- Set up a leader key
 vim.g.mapleader = " "
