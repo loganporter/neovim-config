@@ -34,15 +34,17 @@ return {
       adapters = adapters,
       strategies = {
         chat = {
-          adapter = "ollama", -- or "gemini", "copilot", "anthropic"
+          adapter = "copilot", -- or "gemini", "ollama", "anthropic"g
         },
         inline = {
-          adapter = "ollama", -- or "gemini", "copilot", "anthropic"
+          adapter = "copilot", -- or "gemini", "ollama", "anthropic"
         },
         agent = {
-          adapter = "ollama", -- or "gemini", "copilot", "anthropic"
+          adapter = "copilot", -- or "gemini", "ollama", "anthropic"
         },
       },
     })
+
+    vim.opt.splitright = true
   end
 }
