@@ -2,8 +2,8 @@ local keymap = vim.keymap
 
 -- Keymaps for BufferLine
 -- Cycle through buffers
--- keymap.set("n", "<Tab>", "<Cmd>BufferLineCycleNext<CR>", { desc = "Next buffer" })
--- keymap.set("n", "<S-Tab>", "<Cmd>BufferLineCyclePrev<CR>", { desc = "Prev buffer" })
+keymap.set("n", "]t", "<Cmd>BufferLineCycleNext<CR>", { desc = "Next buffer" })
+keymap.set("n", "[t", "<Cmd>BufferLineCyclePrev<CR>", { desc = "Prev buffer" })
 -- Pick a buffer
 keymap.set("n", "<leader>bp", "<Cmd>BufferLinePick<CR>", { desc = "Pick buffer" })
 keymap.set("n", "<leader>bc", "<Cmd>BufferLinePickClose<CR>", { desc = "Pick close buffer" })
