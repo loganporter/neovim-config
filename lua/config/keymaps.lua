@@ -22,3 +22,16 @@ keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous diagnos
 keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next diagnostic" })
 keymap.set("n", "<leader>ld", vim.diagnostic.open_float, { desc = "Open diagnostic float" })
 keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Set diagnostics to location list" })
+
+-- Diffview keymaps
+vim.keymap.set("n", "<leader>dv", "<cmd>DiffviewOpen<cr>", { desc = "Open Diffview" })
+vim.keymap.set("n", "<leader>dm", "<cmd>DiffviewOpen main<cr>", { desc = "Open Diffview with main branch" })
+vim.keymap.set("n", "<leader>dq", "<cmd>DiffviewClose<cr>", { desc = "Close Diffview" })
+
+-- Telescope keymaps
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
+vim.keymap.set('n', '<leader>fg', builtin.git_files, {})
+vim.keymap.set('n', '<leader>fl', builtin.live_grep, {})
+vim.keymap.set('n', ';', builtin.buffers, {})
+vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
