@@ -40,4 +40,10 @@ vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 keymap.set("n", "<leader>/", "<cmd>lua require('Comment.api').toggle.linewise.current()<CR>", { desc = "Toggle comment" })
 
 -- Toggle comment on a visual selection
-keymap.set("v", "<leader>/", "<cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>", { desc = "Toggle comment" })
+keymap.set("v", "<leader>/", "<cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>",
+  { desc = "Toggle comment" })
+
+-- GitGraph keymaps
+keymap.set("n", "<leader>gg", function()
+  require("gitgraph").draw({}, { all = true, max_count = 5000 })
+end, { desc = "Open GitGraph" })
