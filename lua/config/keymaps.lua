@@ -14,6 +14,9 @@ keymap.set("n", "<leader>bd", "<Cmd>:bd<CR>", { desc = "Close current buffer" })
 keymap.set("n", "<leader>e", "<Cmd>NvimTreeFocus<CR>", { desc = "Focus NvimTree" })
 keymap.set("n", "<leader>t", "<Cmd>NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
 
+-- Move between windows
+keymap.set("n", "<leader>bm", "<C-w>", { desc = "Move between windows" })
+
 -- Terminal Mode Escape
 keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
@@ -24,6 +27,7 @@ keymap.set("n", "<leader>ld", vim.diagnostic.open_float, { desc = "Open diagnost
 keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Set diagnostics to location list" })
 
 -- LSP keymaps
+keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
 keymap.set("n", "<leader>la", vim.lsp.buf.code_action, { desc = "Code action" })
 keymap.set("v", "<leader>la", vim.lsp.buf.code_action, { desc = "Code action" })
 
