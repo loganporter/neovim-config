@@ -23,6 +23,10 @@ keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next diagnostic"
 keymap.set("n", "<leader>ld", vim.diagnostic.open_float, { desc = "Open diagnostic float" })
 keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Set diagnostics to location list" })
 
+-- LSP keymaps
+keymap.set("n", "<leader>la", vim.lsp.buf.code_action, { desc = "Code action" })
+keymap.set("v", "<leader>la", vim.lsp.buf.code_action, { desc = "Code action" })
+
 -- Diffview keymaps
 vim.keymap.set("n", "<leader>dv", "<cmd>DiffviewOpen<cr>", { desc = "Open Diffview" })
 vim.keymap.set("n", "<leader>dm", "<cmd>DiffviewOpen main<cr>", { desc = "Open Diffview with main branch" })
@@ -47,3 +51,11 @@ keymap.set("v", "<leader>/", "<cmd>lua require('Comment.api').toggle.linewise(vi
 keymap.set("n", "<leader>gg", function()
   require("gitgraph").draw({}, { all = true, max_count = 5000 })
 end, { desc = "Open GitGraph" })
+
+-- CodeCompanion keymaps
+keymap.set("n", "<leader>cc", "<cmd>CodeCompanionChat<CR>", { desc = "Open CodeCompanion" })
+keymap.set("v", "<leader>cc", "<cmd>CodeCompanionChat<CR>", { desc = "Open CodeCompanion" })
+keymap.set("n", "<leader>ci", "<cmd>CodeCompanionToggleInline<CR>", { desc = "Toggle inline CodeCompanion" })
+keymap.set("v", "<leader>ci", "<cmd>CodeCompanionToggleInline<CR>", { desc = "Toggle inline CodeCompanion" })
+keymap.set("n", "<leader>ca", "<cmd>CodeCompanionToggleAgent<CR>", { desc = "Toggle agent CodeCompanion" })
+keymap.set("v", "<leader>ca", "<cmd>CodeCompanionToggleAgent<CR>", { desc = "Toggle agent CodeCompanion" })
