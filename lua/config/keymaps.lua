@@ -9,13 +9,12 @@ keymap.set("n", "<leader>bp", "<Cmd>BufferLinePick<CR>", { desc = "Pick buffer" 
 keymap.set("n", "<leader>bc", "<Cmd>BufferLinePickClose<CR>", { desc = "Pick close buffer" })
 -- Close current buffer
 keymap.set("n", "<leader>bd", "<Cmd>:bd<CR>", { desc = "Close current buffer" })
+-- move between buffer windows
+keymap.set("n", "<leader>bm", "<C-w>", { desc = "Move between windows" })
 
 --NvimTree keymaps
 keymap.set("n", "<leader>e", "<Cmd>NvimTreeFocus<CR>", { desc = "Focus NvimTree" })
 keymap.set("n", "<leader>t", "<Cmd>NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
-
--- Move between windows
-keymap.set("n", "<leader>bm", "<C-w>", { desc = "Move between windows" })
 
 -- Terminal Mode Escape
 keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
@@ -28,21 +27,20 @@ keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Set diagnostic
 
 -- LSP keymaps
 keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
-keymap.set("n", "<leader>la", vim.lsp.buf.code_action, { desc = "Code action" })
-keymap.set("v", "<leader>la", vim.lsp.buf.code_action, { desc = "Code action" })
+keymap.set({ "n", "v" }, "<leader>la", vim.lsp.buf.code_action, { desc = "Code action" })
 
 -- Diffview keymaps
-vim.keymap.set("n", "<leader>dv", "<cmd>DiffviewOpen<cr>", { desc = "Open Diffview" })
-vim.keymap.set("n", "<leader>dm", "<cmd>DiffviewOpen main<cr>", { desc = "Open Diffview with main branch" })
-vim.keymap.set("n", "<leader>dq", "<cmd>DiffviewClose<cr>", { desc = "Close Diffview" })
+keymap.set("n", "<leader>dv", "<cmd>DiffviewOpen<cr>", { desc = "Open Diffview" })
+keymap.set("n", "<leader>dm", "<cmd>DiffviewOpen main<cr>", { desc = "Open Diffview with main branch" })
+keymap.set("n", "<leader>dq", "<cmd>DiffviewClose<cr>", { desc = "Close Diffview" })
 
 -- Telescope keymaps
 local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-vim.keymap.set('n', '<leader>fg', builtin.git_files, {})
-vim.keymap.set('n', '<leader>fl', builtin.live_grep, {})
-vim.keymap.set('n', ';', builtin.buffers, {})
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+keymap.set('n', '<leader>ff', builtin.find_files, {})
+keymap.set('n', '<leader>fg', builtin.git_files, {})
+keymap.set('n', '<leader>fl', builtin.live_grep, {})
+keymap.set('n', ';', builtin.buffers, {})
+keymap.set('n', '<leader>fh', builtin.help_tags, {})
 
 -- Toggle comment on a line
 keymap.set("n", "<leader>/", "<cmd>lua require('Comment.api').toggle.linewise.current()<CR>", { desc = "Toggle comment" })
@@ -57,9 +55,14 @@ keymap.set("n", "<leader>gg", function()
 end, { desc = "Open GitGraph" })
 
 -- CodeCompanion keymaps
-keymap.set("n", "<leader>cc", "<cmd>CodeCompanionChat<CR>", { desc = "Open CodeCompanion" })
-keymap.set("v", "<leader>cc", "<cmd>CodeCompanionChat<CR>", { desc = "Open CodeCompanion" })
-keymap.set("n", "<leader>ci", "<cmd>CodeCompanionToggleInline<CR>", { desc = "Toggle inline CodeCompanion" })
-keymap.set("v", "<leader>ci", "<cmd>CodeCompanionToggleInline<CR>", { desc = "Toggle inline CodeCompanion" })
-keymap.set("n", "<leader>ca", "<cmd>CodeCompanionToggleAgent<CR>", { desc = "Toggle agent CodeCompanion" })
-keymap.set("v", "<leader>ca", "<cmd>CodeCompanionToggleAgent<CR>", { desc = "Toggle agent CodeCompanion" })
+keymap.set({ "n", "v" }, "<leader>cc", "<cmd>CodeCompanionChat<CR>", { desc = "Open CodeCompanion" })
+keymap.set({ "n", "v" }, "<leader>ct", "<cmd>CodeCompanionChat Toggle<CR>", { desc = "Toggle CodeCompanion" })
+keymap.set({ "n", "v" }, "<leader>ci", "<cmd>CodeCompanion<CR>", { desc = "Open inline CodeCompanion" })
+keymap.set("v", "<leader>ca", "<cmd>CodeCompanionChat Add<CR>", { desc = "Add visual selection to CodeCompanion" })
+
+-- Expand 'cc' into 'CodeCompanion' in the command line
+vim.cmd([[cab cc CodeCompanion]])
+
+-- Copilot keymaps
+keymap.set("i", "<C-l>", 'copilot#Accept("<CR>")', { expr = true, silent = true, noremap = true })
+keymap.set("i", "<D-Right>", 'copilot#Accept("<Space>")', { expr = true, silent = true, noremap = true })
