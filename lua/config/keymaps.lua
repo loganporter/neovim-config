@@ -4,13 +4,18 @@ local keymap = vim.keymap
 -- Cycle through buffers
 keymap.set("n", "]t", "<Cmd>BufferLineCycleNext<CR>", { desc = "Next buffer" })
 keymap.set("n", "[t", "<Cmd>BufferLineCyclePrev<CR>", { desc = "Prev buffer" })
--- Pick a buffer
-keymap.set("n", "<leader>bp", "<Cmd>BufferLinePick<CR>", { desc = "Pick buffer" })
-keymap.set("n", "<leader>bc", "<Cmd>BufferLinePickClose<CR>", { desc = "Pick close buffer" })
+-- Pick a buffer to close
+keymap.set("n", "<leader>bcp", "<Cmd>BufferLinePickClose<CR>", { desc = "Pick close buffer" })
 -- Close current buffer
-keymap.set("n", "<leader>bd", "<Cmd>:bd<CR>", { desc = "Close current buffer" })
+keymap.set("n", "<leader>bcc", "<Cmd>:bd<CR>", { desc = "Close current buffer" })
+-- Close other buffers
+keymap.set("n", "<leader>bco", "<Cmd>BufferLineCloseOthers<CR>", { desc = "Close other buffers" })
+-- Close buffers to the left
+keymap.set("n", "<leader>bcl", "<Cmd>BufferLineCloseLeft<CR>", { desc = "Close buffers to the left" })
+-- Close buffers to the right
+keymap.set("n", "<leader>bcr", "<Cmd>BufferLineCloseRight<CR>", { desc = "Close buffers to the right" })
 -- move between buffer windows
-keymap.set("n", "<leader>bm", "<C-w>", { desc = "Move between windows" })
+keymap.set("n", "<leader>bb", "<C-w>", { desc = "Move between windows" })
 
 --NvimTree keymaps
 keymap.set("n", "<leader>e", "<Cmd>NvimTreeFocus<CR>", { desc = "Focus NvimTree" })
