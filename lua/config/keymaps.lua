@@ -41,11 +41,22 @@ keymap.set("n", "<leader>dq", "<cmd>DiffviewClose<cr>", { desc = "Close Diffview
 
 -- Telescope keymaps
 local builtin = require('telescope.builtin')
-keymap.set('n', '<leader>ff', builtin.find_files, {})
-keymap.set('n', '<leader>fg', builtin.git_files, {})
-keymap.set('n', '<leader>fl', builtin.live_grep, {})
-keymap.set('n', ';', builtin.buffers, {})
-keymap.set('n', '<leader>fh', builtin.help_tags, {})
+keymap.set('n', '<leader>ff', builtin.find_files, { desc = "Find files" })
+keymap.set('n', '<leader>fg', builtin.git_files, { desc = "Find git files" })
+keymap.set('n', '<leader>fl', builtin.live_grep, { desc = "Live grep" })
+keymap.set('n', ';', builtin.buffers, { desc = "Buffers" })
+keymap.set('n', '<leader>fb', builtin.current_buffer_fuzzy_find, { desc = "Current buffer fuzzy find" })
+keymap.set('n', '<leader>fh', builtin.help_tags, { desc = "Help tags" })
+keymap.set('n', '<leader>fk', builtin.keymaps, { desc = "Keymaps" })
+keymap.set('n', '<leader>fo', builtin.commands, { desc = "Commands" })
+-- LSP related Telescope keymaps
+keymap.set('n', '<leader>fe', builtin.diagnostics, { desc = "Diagnostics" })
+keymap.set('n', '<leader>fr', builtin.lsp_references, { desc = "LSP references" })
+keymap.set('n', '<leader>fi', builtin.lsp_implementations, { desc = "LSP implementations" })
+keymap.set('n', '<leader>fs', builtin.lsp_document_symbols, { desc = "LSP document symbols" })
+keymap.set('n', '<leader>fw', builtin.lsp_workspace_symbols, { desc = "LSP workspace symbols" })
+keymap.set('n', '<leader>fd', builtin.lsp_definitions, { desc = "LSP definitions" })
+keymap.set('n', '<leader>ft', builtin.lsp_type_definitions, { desc = "LSP Type definitions" })
 
 -- Toggle comment on a line
 keymap.set("n", "<leader>/", "<cmd>lua require('Comment.api').toggle.linewise.current()<CR>", { desc = "Toggle comment" })
