@@ -16,7 +16,7 @@ keymap.set("n", "<leader>bcl", "<Cmd>BufferLineCloseLeft<CR>", { desc = "Close b
 -- Close buffers to the right
 keymap.set("n", "<leader>bcr", "<Cmd>BufferLineCloseRight<CR>", { desc = "Close buffers to the right" })
 -- move between buffer windows
-keymap.set("n", "<leader>bb", "<C-w>", { desc = "Move between windows" })
+keymap.set("n", "<leader>m", "<C-w>", { desc = "Move between windows" })
 
 --NvimTree keymaps
 keymap.set("n", "<leader>e", "<Cmd>NvimTreeFocus<CR>", { desc = "Focus NvimTree" })
