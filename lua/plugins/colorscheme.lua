@@ -10,6 +10,9 @@ return {
       Pmenu = { bg = "#000000" },
       -- Override here is for git blame plugin font colour and style
       Comment = { fg = "#777777", italic = true },
+      -- Override here is for git graph
+      DiffDelete = { fg = "#444444", bg = "NONE" },
+      DiffRemoved = { fg = "#444444", bg = "NONE" },
     },
   }
 }
