@@ -58,12 +58,24 @@ return {
         "ts_ls",
         "lua_ls",
         "ruff",
-        "rust_analyzer"
+        "rust_analyzer",
+        "eslint",
       },
       handlers = {
         function(server_name)
           require('lspconfig')[server_name].setup({
             capabilities = capabilities,
+          })
+        end,
+        eslint = function ()
+          require("lspconfig").eslint.setup({ 
+            capabilities = capabilities,
+            on_attach = function(client, bufnr)
+              vim.api.nvim_create_autocmd("BufWritePre", {
+                buffer = bufnr,
+                command = "EslintFixAll",
+              })
+            end,
           })
         end,
         lua_ls = function()
@@ -100,6 +112,7 @@ return {
       sources = {
         { name = 'path' },
         { name = 'nvim_lsp' },
+        { name = 'nvim_lint' },
         { name = 'luasnip', keyword_length = 2 },
         { name = 'buffer',  keyword_length = 3 },
       },
