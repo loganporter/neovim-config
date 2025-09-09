@@ -7,6 +7,8 @@ keymap.set("n", "t", "<Cmd>BufferLineCycleNext<CR>", { desc = "Next buffer" })
 keymap.set("n", "[t", "<Cmd>BufferLineCyclePrev<CR>", { desc = "Prev buffer" })
 -- Pick a buffer to close
 keymap.set("n", "<leader>bcp", "<Cmd>BufferLinePickClose<CR>", { desc = "Pick close buffer" })
+-- Pick a buffer
+keymap.set("n", "<leader>bp", "<Cmd>BufferLinePick<CR>", { desc = "Pick buffer" })
 -- Close current buffer
 keymap.set("n", "<leader>bcc", "<Cmd>:bd<CR>", { desc = "Close current buffer" })
 -- Close other buffers
