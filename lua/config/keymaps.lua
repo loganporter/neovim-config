@@ -50,6 +50,12 @@ keymap.set("n", "<leader>dh", "<cmd>DiffviewFileHistory<cr>", { desc = "View Rep
 keymap.set("n", "<leader>dy", "<cmd>DiffviewFileHistory %<cr>", { desc = "View file history" })
 keymap.set("n", "<leader>da", "<cmd>DiffviewOpen --all<cr>", { desc = "Open Diffview with all changes" })
 
+-- Gitsigns keymaps
+keymap.set("n", "<leader>hs", ":Gitsigns stage_hunk<CR>", { desc = "Stage hunk" })
+keymap.set("n", "<leader>hr", ":Gitsigns reset_hunk<CR>", { desc = "Reset hunk" })
+keymap.set("n", "<leader>hu", ":Gitsigns undo_stage_hunk<CR>", { desc = "Undo stage hunk" })
+keymap.set("n", "<leader>hp", ":Gitsigns preview_hunk<CR>", { desc = "Preview hunk" })
+
 -- Telescope keymaps
 local builtin = require('telescope.builtin')
 keymap.set('n', '<leader>ff', builtin.find_files, { desc = "Find files" })
