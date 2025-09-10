@@ -26,7 +26,11 @@ vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to right window", silent = t
 
 --NvimTree keymaps
 keymap.set("n", "<leader>e", "<Cmd>NvimTreeFocus<CR>", { desc = "Focus NvimTree" })
-keymap.set("n", "<leader>t", "<Cmd>NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
+keymap.set("n", "<leader>tt", "<Cmd>NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
+
+-- General keymaps
+-- toggle line wrap
+keymap.set("n", "<leader>tw", ":set wrap!<CR>", { desc = "Toggle line wrap" })
 
 -- Terminal Mode Escape
 keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
