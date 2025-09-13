@@ -1,5 +1,8 @@
 local keymap = vim.keymap
 
+-- Save file
+keymap.set("n", "<leader>w", ":w<CR>", { desc = "Save" })
+
 -- Keymaps for BufferLine
 -- Cycle through buffers
 keymap.set("n", "]t", "<Cmd>BufferLineCycleNext<CR>", { desc = "Next buffer" })
@@ -26,12 +29,20 @@ vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to right window", silent = t
 
 --NvimTree keymaps
 keymap.set("n", "<leader>e", "<Cmd>NvimTreeFocus<CR>", { desc = "Focus NvimTree" })
-keymap.set("n", "<leader>tt", "<Cmd>NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
+keymap.set("n", "<leader>tr", "<Cmd>NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
 
 -- General keymaps
 -- toggle line wrap
 keymap.set("n", "<leader>tw", ":set wrap!<CR>", { desc = "Toggle line wrap" })
 
+-- Open a terminal
+keymap.set("n", "<leader>tt", ":terminal<CR>", { desc = "Open terminal" })
+-- Open terminal in a horizontal split
+keymap.set("n", "<leader>th", ":split | terminal<CR>", { desc = "Open terminal in horizontal split" })
+-- Open terminal in a vertical split
+keymap.set("n", "<leader>tv", ":vsplit | terminal<CR>", { desc = "Open terminal in vertical split" })
+-- Open terminal in a new tab
+keymap.set("n", "<leader>tn", ":tabnew | terminal<CR>", { desc = "Open terminal in new tab" })
 -- Terminal Mode Escape
 keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 

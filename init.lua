@@ -17,8 +17,5 @@ vim.cmd([[
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
--- A simple keybinding
-vim.keymap.set("n", "<leader>w", ":w<CR>", { desc = "Save" })
-
 require("config.lazy")
 require("config.keymaps")
