@@ -15,7 +15,7 @@ return {
       GitGraphHash = { fg = "#6c757d" },
       GitGraphTimestamp = { fg = "#adb5bd" },
       GitGraphAuthor = { fg = "#82aaff" },
-      GitGraphBranchName = { fg = "#c3e88d" },
+      GitGraphBranchName = { fg = "#93f88d" },
       GitGraphBranchTag = { fg = "#00aaff" },
       GitGraphBranchMsg = { fg = "#f2d994" },
       GitGraphBranch1 = { fg = "#66c2a5" },
