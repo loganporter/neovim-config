@@ -11,6 +11,18 @@ return {
       -- Override here is for git graph
       DiffDelete = { fg = "#444444", bg = "NONE" },
       DiffRemoved = { fg = "#444444", bg = "NONE" },
+      -- GitGraph highlight groups
+      GitGraphHash = { fg = "#6c757d" },
+      GitGraphTimestamp = { fg = "#adb5bd" },
+      GitGraphAuthor = { fg = "#82aaff" },
+      GitGraphBranchName = { fg = "#c3e88d" },
+      GitGraphBranchTag = { fg = "#00aaff" },
+      GitGraphBranchMsg = { fg = "#f2d994" },
+      GitGraphBranch1 = { fg = "#66c2a5" },
+      GitGraphBranch2 = { fg = "#fc8d62" },
+      GitGraphBranch3 = { fg = "#56b6c2" },
+      GitGraphBranch4 = { fg = "#e78ac3" },
+      GitGraphBranch5 = { fg = "#e5c07b" },
     },
   }
 }
