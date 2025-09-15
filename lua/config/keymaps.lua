@@ -108,9 +108,13 @@ keymap.set({ "n", "v" }, "<leader>ct", "<cmd>CodeCompanionChat Toggle<CR>", { de
 keymap.set({ "n", "v" }, "<leader>ci", "<cmd>CodeCompanion<CR>", { desc = "Open inline CodeCompanion" })
 keymap.set("v", "<leader>ca", "<cmd>CodeCompanionChat Add<CR>", { desc = "Add visual selection to CodeCompanion" })
 
--- Expand 'cc' into 'CodeCompanion' in the command line
-vim.cmd([[cab cc CodeCompanion]])
-
 -- Copilot keymaps
 keymap.set("i", "<C-l>", 'copilot#Accept("<CR>")', { expr = true, silent = true, noremap = true })
 keymap.set("i", "<D-Right>", 'copilot#Accept("<Space>")', { expr = true, silent = true, noremap = true })
+
+-- Expand 'cc' into 'CodeCompanion' in the command line
+vim.cmd([[cab cc CodeCompanion]])
+
+-- Lazy keymaps
+keymap.set("n", "<leader>lu", "<cmd>Lazy update<CR>", { desc = "Open Lazy" })
+keymap.set("n", "<leader>lr", "<cmd>Lazy restore<CR>", { desc = "Restore Lazy" })
