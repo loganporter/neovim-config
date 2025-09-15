@@ -20,8 +20,8 @@ return {
       GitGraphBranchMsg = { fg = "#f2d994" },
       GitGraphBranch1 = { fg = "#66c2a5" },
       GitGraphBranch2 = { fg = "#fc8d62" },
-      GitGraphBranch3 = { fg = "#56b6c2" },
-      GitGraphBranch4 = { fg = "#e78ac3" },
+      GitGraphBranch3 = { fg = "#b39ddb" },
+      GitGraphBranch4 = { fg = "#64b5f6" },
       GitGraphBranch5 = { fg = "#e5c07b" },
     },
   }
