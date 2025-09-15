@@ -43,14 +43,14 @@ return {
 
     -- Diagnostic signs
     local signs = {
-        Error = " ",
-        Warn = " ",
-        Hint = " ",
-        Info = " ",
+      Error = " ",
+      Warn = " ",
+      Hint = " ",
+      Info = " ",
     }
     for type, icon in pairs(signs) do
-        local hl = "DiagnosticSign" .. type
-        vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+      local hl = "DiagnosticSign" .. type
+      vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
     end
 
     require('mason-lspconfig').setup({
@@ -67,8 +67,8 @@ return {
             capabilities = capabilities,
           })
         end,
-        eslint = function ()
-          require("lspconfig").eslint.setup({ 
+        eslint = function()
+          require("lspconfig").eslint.setup({
             capabilities = capabilities,
             on_attach = function(client, bufnr)
               vim.api.nvim_create_autocmd("BufWritePre", {
@@ -113,8 +113,8 @@ return {
         { name = 'path' },
         { name = 'nvim_lsp' },
         { name = 'nvim_lint' },
-        { name = 'luasnip', keyword_length = 2 },
-        { name = 'buffer',  keyword_length = 3 },
+        { name = 'luasnip',  keyword_length = 2 },
+        { name = 'buffer',   keyword_length = 3 },
       },
       mapping = cmp.mapping.preset.insert({
         -- ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
