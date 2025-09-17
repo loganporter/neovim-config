@@ -26,6 +26,9 @@ vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to left window", silent = tr
 vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to lower window", silent = true, noremap = true })
 vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to upper window", silent = true, noremap = true })
 vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to right window", silent = true, noremap = true })
+-- create a new empty buffer
+keymap.set({ "n", "v" }, "<leader>bn", ":enew<CR>", { desc = "New empty buffer" })
+keymap.set({ "n", "v" }, "<leader>bv", ":vnew<CR>", { desc = "New empty buffer in vertical split" })
 
 --NvimTree keymaps
 keymap.set("n", "<leader>e", "<Cmd>NvimTreeFocus<CR>", { desc = "Focus NvimTree" })
@@ -89,6 +92,10 @@ keymap.set('n', '<leader>fs', builtin.lsp_document_symbols, { desc = "LSP docume
 keymap.set('n', '<leader>fw', builtin.lsp_workspace_symbols, { desc = "LSP workspace symbols" })
 keymap.set('n', '<leader>fd', builtin.lsp_definitions, { desc = "LSP definitions" })
 keymap.set('n', '<leader>ft', builtin.lsp_type_definitions, { desc = "LSP Type definitions" })
+
+-- Close quickfix and location list
+keymap.set("n", "<leader>cq", "<cmd>cclose<CR>", { desc = "Close quickfix list" })
+keymap.set("n", "<leader>cl", "<cmd>lclose<CR>", { desc = "Close location list" })
 
 -- Toggle comment on a line
 keymap.set("n", "<leader>/", "<cmd>lua require('Comment.api').toggle.linewise.current()<CR>", { desc = "Toggle comment" })
