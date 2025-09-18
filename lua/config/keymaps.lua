@@ -116,8 +116,10 @@ keymap.set({ "n", "v" }, "<leader>ci", "<cmd>CodeCompanion<CR>", { desc = "Open 
 keymap.set("v", "<leader>ca", "<cmd>CodeCompanionChat Add<CR>", { desc = "Add visual selection to CodeCompanion" })
 
 -- Copilot keymaps
-keymap.set("i", "<C-l>", 'copilot#Accept("<CR>")', { expr = true, silent = true, noremap = true })
-keymap.set("i", "<D-Right>", 'copilot#Accept("<Space>")', { expr = true, silent = true, noremap = true })
+-- Accept suggestion
+keymap.set("i", "<C-j>", 'copilot#Accept("\\<CR>")', { expr = true, replace_keycodes = false })
+-- Accept next word suggestion
+keymap.set("i", "<C-l>", '<Plug>(copilot-accept-word)')
 
 -- Expand 'cc' into 'CodeCompanion' in the command line
 vim.cmd([[cab cc CodeCompanion]])
