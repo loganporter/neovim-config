@@ -5,9 +5,8 @@ keymap.set("n", "<leader>w", ":w<CR>", { desc = "Save" })
 
 -- Keymaps for BufferLine
 -- Cycle through buffers
-keymap.set("n", "]t", "<Cmd>BufferLineCycleNext<CR>", { desc = "Next buffer" })
 keymap.set("n", "t", "<Cmd>BufferLineCycleNext<CR>", { desc = "Next buffer" })
-keymap.set("n", "[t", "<Cmd>BufferLineCyclePrev<CR>", { desc = "Prev buffer" })
+keymap.set("n", "T", "<Cmd>BufferLineCyclePrev<CR>", { desc = "Prev buffer" })
 -- Pick a buffer to close
 keymap.set("n", "<leader>bcp", "<Cmd>BufferLinePickClose<CR>", { desc = "Pick close buffer" })
 -- Pick a buffer
