@@ -33,6 +33,8 @@ keymap.set({ "n", "v" }, "<leader>bv", ":vnew<CR>", { desc = "New empty buffer i
 --NvimTree keymaps
 keymap.set("n", "<leader>e", "<Cmd>NvimTreeFocus<CR>", { desc = "Focus NvimTree" })
 keymap.set("n", "<leader>tr", "<Cmd>NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
+keymap.set("n", "<leader>tf", "<Cmd>NvimTreeFindFile<CR>", { desc = "Find file in NvimTree" })
+keymap.set("n", "<leader>tc", "<Cmd>NvimTreeCollapse<CR>", { desc = "Collapse NvimTree" })
 
 -- General keymaps
 -- toggle line wrap
