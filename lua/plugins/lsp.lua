@@ -60,6 +60,7 @@ return {
         "ruff",
         "rust_analyzer",
         "eslint",
+        "graphql",
       },
       handlers = {
         function(server_name)
@@ -76,6 +77,12 @@ return {
                 command = "EslintFixAll",
               })
             end,
+          })
+        end,
+        graphql = function()
+          require("lspconfig").graphql.setup({
+            capabilities = capabilities,
+            filetypes = { "graphql", "gql", "javascript", "javascriptreact", "typescript", "typescriptreact" },
           })
         end,
         lua_ls = function()
