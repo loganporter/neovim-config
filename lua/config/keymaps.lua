@@ -11,6 +11,10 @@ keymap.set("n", "T", "<Cmd>BufferLineCyclePrev<CR>", { desc = "Prev buffer" })
 keymap.set("n", "<leader>bcp", "<Cmd>BufferLinePickClose<CR>", { desc = "Pick close buffer" })
 -- Pick a buffer
 keymap.set("n", "<leader>bp", "<Cmd>BufferLinePick<CR>", { desc = "Pick buffer" })
+-- Go to first buffer
+keymap.set("n", "<leader>bf", "<Cmd>BufferLineGoToBuffer 1<CR>", { desc = "Go to first buffer" })
+-- Go to last buffer
+keymap.set("n", "<leader>bl", "<Cmd>BufferLineGoToBuffer -1<CR>", { desc = "Go to last buffer" })
 -- Close current buffer
 keymap.set("n", "<leader>bcc", "<Cmd>:bd<CR>", { desc = "Close current buffer" })
 -- Close other buffers
@@ -63,6 +67,7 @@ keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Set diagnostic
 -- LSP keymaps
 keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
 keymap.set({ "n", "v" }, "<leader>la", vim.lsp.buf.code_action, { desc = "Code action" })
+keymap.set({ "n", "v" }, "<leader>lr", ":LspRestart<CR>", { desc = "Restart LSP server" })
 
 -- Diffview keymaps
 keymap.set("n", "<leader>dv", "<cmd>DiffviewOpen<cr>", { desc = "Open Diffview" })
@@ -102,17 +107,13 @@ keymap.set('n', '<leader>ft', builtin.lsp_type_definitions, { desc = "LSP Type d
 keymap.set("n", "<leader>cq", "<cmd>cclose<CR>", { desc = "Close quickfix list" })
 keymap.set("n", "<leader>cl", "<cmd>lclose<CR>", { desc = "Close location list" })
 
--- Toggle comment on a line
-keymap.set("n", "<leader>/", "<cmd>lua require('Comment.api').toggle.linewise.current()<CR>", { desc = "Toggle comment" })
-
--- Toggle comment on a visual selection
-keymap.set("v", "<leader>/", "<cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>",
-  { desc = "Toggle comment" })
-
 -- GitGraph keymaps
 keymap.set("n", "<leader>gg", function()
   require("gitgraph").draw({}, { all = true, max_count = 5000 })
 end, { desc = "Open GitGraph" })
+keymap.set("n", "<leader>gb", function()
+  require("gitgraph").draw({}, { all = false, max_count = 5000 })
+end, { desc = "Open GitGraph for current branch" })
 
 -- CodeCompanion keymaps
 keymap.set({ "n", "v" }, "<leader>cc", "<cmd>CodeCompanionChat<CR>", { desc = "Open CodeCompanion" })
@@ -130,5 +131,5 @@ keymap.set("i", "<C-l>", '<Plug>(copilot-accept-word)')
 vim.cmd([[cab cc CodeCompanion]])
 
 -- Lazy keymaps
-keymap.set("n", "<leader>lu", "<cmd>Lazy update<CR>", { desc = "Open Lazy" })
-keymap.set("n", "<leader>lr", "<cmd>Lazy restore<CR>", { desc = "Restore Lazy" })
+keymap.set("n", "<leader>lu", "<cmd>Lazy update<CR>", { desc = "Update Lazy" })
+keymap.set("n", "<leader>lp", "<cmd>Lazy restore<CR>", { desc = "Restore Lazy" })
