@@ -46,6 +46,9 @@ keymap.set("n", "<leader>tc", "<Cmd>NvimTreeCollapse<CR>", { desc = "Collapse Nv
 -- General keymaps
 -- toggle line wrap
 keymap.set("n", "<leader>tw", ":set wrap!<CR>", { desc = "Toggle line wrap" })
+-- no highlight
+keymap.set({ "n", "v" }, "<leader>n", ":noh<CR>", { desc = "No highlight", silent = true })
+
 
 -- Open a terminal
 keymap.set("n", "<leader>tt", ":terminal<CR>", { desc = "Open terminal" })
