@@ -48,6 +48,9 @@ keymap.set("n", "<leader>tc", "<Cmd>NvimTreeCollapse<CR>", { desc = "Collapse Nv
 keymap.set("n", "<leader>tw", ":set wrap!<CR>", { desc = "Toggle line wrap" })
 -- no highlight
 keymap.set({ "n", "v" }, "<leader>n", ":noh<CR>", { desc = "No highlight", silent = true })
+-- select all
+keymap.set({ "n", "v" }, "<C-a>", "ggVG", { desc = "Select all", noremap = true, silent = true })
+
 
 
 -- Open a terminal
