@@ -130,6 +130,29 @@ keymap.set("i", "<C-l>", '<Plug>(copilot-accept-word)')
 -- Expand 'cc' into 'CodeCompanion' in the command line
 vim.cmd([[cab cc CodeCompanion]])
 
+-- Keymaps for search and replace with visual selection
+_G.VisualOperation = function(op)
+  vim.cmd('normal! gvy')
+  local text = vim.fn.getreg('"')
+  if text == '' then
+    return
+  end
+  local escaped_text = vim.fn.escape(text, '/\\')
+  if op == 'search' then
+    vim.cmd('normal! /' .. escaped_text .. '\r')
+  elseif op == 'replace' then -- only replaces the first occurrence
+    vim.api.nvim_feedkeys(":%s/" .. escaped_text .. "/", "n", false)
+  elseif op == 'replace_all' then
+    vim.api.nvim_feedkeys(":%s/" .. escaped_text .. "//g", "n", false)
+  end
+end
+
+keymap.set("v", "<leader>f", ":<C-u>lua _G.VisualOperation('search')<CR>",
+  { desc = "Search for visual selection", noremap = true, silent = true })
+keymap.set("v", "<leader>r", ":<C-u>lua _G.VisualOperation('replace_all')<CR>",
+  { desc = "Find and replace all for visual selection", noremap = true, silent = true })
+
+
 -- Lazy keymaps
 keymap.set("n", "<leader>lu", "<cmd>Lazy update<CR>", { desc = "Update Lazy" })
 keymap.set("n", "<leader>lp", "<cmd>Lazy restore<CR>", { desc = "Restore Lazy" })
