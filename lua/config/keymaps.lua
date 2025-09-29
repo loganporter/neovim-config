@@ -46,6 +46,10 @@ keymap.set("n", "<leader>tc", "<Cmd>NvimTreeCollapse<CR>", { desc = "Collapse Nv
 -- General keymaps
 -- toggle line wrap
 keymap.set("n", "<leader>tw", ":set wrap!<CR>", { desc = "Toggle line wrap" })
+-- toggle spell check
+keymap.set("n", "<leader>st", ":set spell!<CR>", { desc = "Toggle spell check" })
+-- spell suggestions
+keymap.set("n", "<leader>ss", "z=", { desc = "Spell suggestions" })
 -- no highlight
 keymap.set({ "n", "v" }, "<leader>n", ":noh<CR>", { desc = "No highlight", silent = true })
 -- select all

@@ -7,6 +7,9 @@ vim.opt.expandtab = true
 vim.opt.autoindent = true
 vim.opt.clipboard = "unnamedplus"
 vim.opt.guifont = "Menlo Regular for Powerlines:h14"
+vim.opt.spell = true
+
+-- Hello my name is Tim
 
 -- Disable the how to disable mouse option in right click menu
 vim.cmd([[
