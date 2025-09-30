@@ -44,7 +44,7 @@ These are some global keybindings defined in your `init.lua`:
 
 ### Colorizer
 
--   **Purpose**: Highlights color codes (e.g., `#FFFFFF`, `rgb(255, 255, 255)`) with their actual color.
+-   **Purpose**: Highlights colour codes (e.g., `#FFFFFF`, `rgb(255, 255, 255)`) with their actual colour.
 -   **Usage**: This works automatically.
 
 ### Comment
@@ -88,7 +88,7 @@ These are some global keybindings defined in your `init.lua`:
 -   **Keybindings**:
     -   `K`: Show hover information for the word under the cursor.
     -   `gd`: Go to the definition of the word under the cursor.
-    -   `gD`: Go to the declaration of the word under thecursor.
+    -   `gD`: Go to the declaration of the word under the cursor.
     -   `gi`: Go to the implementation of the word under the cursor.
     -   `gr`: Show references to the word under the cursor.
     -   `<leader>ca`: Show code actions.
