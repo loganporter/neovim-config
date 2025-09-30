@@ -10,7 +10,7 @@ vim.opt.guifont = "Menlo Regular for Powerlines:h14"
 vim.opt.spell = true
 vim.opt.spelllang = 'en_nz'
 vim.opt.spellfile = vim.fn.stdpath('config') ..
-'/spell/en.utf-8.add,' .. vim.fn.stdpath('config') .. '/spell/en.utf-8.local.add'
+    '/spell/en.utf-8.add,' .. vim.fn.stdpath('config') .. '/spell/en.utf-8.local.add'
 vim.opt.spellcapcheck = ''
 vim.opt.spellsuggest = 'best,6'
 vim.cmd("set spelloptions=camel")
@@ -32,6 +32,8 @@ vim.api.nvim_create_autocmd({ "BufWinEnter", "BufFilePost" }, {
       "python",
       "javascript",
       "typescript",
+      "typescriptreact",
+      "javascriptreact",
       "html",
       "css",
       "json",
