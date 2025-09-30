@@ -13,10 +13,6 @@ vim.opt.spellfile = vim.fn.stdpath('config') .. '/spell/en.utf-8.add,' .. vim.fn
 vim.opt.spellcapcheck = ''
 vim.opt.spellsuggest = 'best,6'
 vim.cmd("set spelloptions=camel")
--- Ignore short words (3 or fewer letters) in spell checking
-vim.cmd([[
-  syntax match IgnoreShortWords /\<\w\{1,3\}>/ contains=@NoSpell
-]])
 
 -- Disable the how to disable mouse option in right click menu
 vim.cmd([[
