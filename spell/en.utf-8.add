@@ -25,3 +25,4 @@ plugins
 colorscheme
 plugin
 statusline
+inline

@@ -50,6 +50,22 @@ keymap.set("n", "<leader>tw", ":set wrap!<CR>", { desc = "Toggle line wrap" })
 keymap.set("n", "<leader>st", ":set spell!<CR>", { desc = "Toggle spell check" })
 -- spell suggestions
 keymap.set("n", "<leader>ss", "z=", { desc = "Spell suggestions" })
+-- add word to git tracked spell file
+keymap.set("n", "<leader>sa", "zg", { desc = "Add word to git spell file" })
+-- add word to local spell file
+keymap.set("n", "<leader>sl", function()
+  local original_spellfile_str = vim.o.spellfile
+  local files = vim.split(original_spellfile_str, ",")
+  if #files > 1 then
+    local swapped_spellfile_str = files[2] .. "," .. files[1]
+    vim.o.spellfile = swapped_spellfile_str
+    vim.cmd("normal! zg")
+    vim.o.spellfile = original_spellfile_str
+    print("Added word to local spell file")
+  else
+    print("Local spell file not configured")
+  end
+end, { desc = "Add word to local spell file" })
 -- no highlight
 keymap.set({ "n", "v" }, "<leader>n", ":noh<CR>", { desc = "No highlight", silent = true })
 -- select all
