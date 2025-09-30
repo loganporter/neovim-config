@@ -3,7 +3,7 @@ return {
   priority = 1000,           -- Ensure this colorscheme is loaded first
   lazy = false,              -- Load this colorscheme immediately
   opts = {
-    terminal_colors = false, -- Disable terminal colors
+    terminal_colors = false, -- Disable terminal colours
     group_overrides = {
       -- Override specific highlight groups
       NormalFloat = { bg = "#000000" },

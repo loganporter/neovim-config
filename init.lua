@@ -8,8 +8,14 @@ vim.opt.autoindent = true
 vim.opt.clipboard = "unnamedplus"
 vim.opt.guifont = "Menlo Regular for Powerlines:h14"
 vim.opt.spell = true
-
--- Hello my name is Tim
+vim.opt.spelllang = 'en_nz'
+vim.opt.spellcapcheck = ''
+vim.opt.spellsuggest = 'best,6'
+vim.cmd("set spelloptions=camel")
+-- Ignore short words (3 or fewer letters) in spell checking
+vim.cmd([[
+  syntax match IgnoreShortWords /\<\w\{1,3\}>/ contains=@NoSpell
+]])
 
 -- Disable the how to disable mouse option in right click menu
 vim.cmd([[
