@@ -8,6 +8,8 @@ return {
       -- Override specific highlight groups
       NormalFloat = { bg = "#000000" },
       Pmenu = { bg = "#000000" },
+      -- Spell check overrides
+      SpellBad = { undercurl = true, sp = "#5c82bf" },
       -- Override here is for git graph
       DiffDelete = { fg = "#444444", bg = "NONE" },
       DiffRemoved = { fg = "#444444", bg = "NONE" },
