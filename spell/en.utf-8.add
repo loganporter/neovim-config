@@ -141,3 +141,7 @@ etc
 mpc
 CLI
 readonly
+PROMETHEUS
+prometheus
+Timestamp
+ip
