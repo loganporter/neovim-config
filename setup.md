@@ -14,6 +14,12 @@ and install ripgrep
 brew install ripgrep
 ```
 
+and lazygit
+
+```bash
+brew install lazygit
+```
+
 Then create the config directory
 
 ```bash
