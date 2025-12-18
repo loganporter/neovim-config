@@ -182,6 +182,12 @@ keymap.set("v", "<leader>r", ":<C-u>lua _G.VisualOperation('replace_all')<CR>",
   { desc = "Find and replace all for visual selection", noremap = true, silent = true })
 
 
+-- UFO keymaps
+keymap.set("n", "zR", require("ufo").openAllFolds, { desc = "Open all folds" })
+keymap.set("n", "zM", require("ufo").closeAllFolds, { desc = "Close all folds" })
+keymap.set("n", "zr", require("ufo").openAllFolds, { desc = "Open all folds" })
+keymap.set("n", "zm", require("ufo").closeAllFolds, { desc = "Close all folds" })
+
 -- Lazy keymaps
 keymap.set("n", "<leader>lu", "<cmd>Lazy update<CR>", { desc = "Update Lazy" })
 keymap.set("n", "<leader>lp", "<cmd>Lazy restore<CR>", { desc = "Restore Lazy" })

@@ -7,6 +7,12 @@ vim.opt.expandtab = true
 vim.opt.autoindent = true
 vim.opt.clipboard = "unnamedplus"
 vim.opt.guifont = "Menlo Regular for Powerlines:h14"
+-- Fold settings
+vim.o.foldcolumn = '1'
+vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
+-- Enable spell checking with custom settings
 vim.opt.spell = true
 vim.opt.spelllang = 'en_nz'
 vim.opt.spellfile = vim.fn.stdpath('config') ..
