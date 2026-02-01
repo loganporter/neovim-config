@@ -23,6 +23,13 @@ vim.opt.rtp:prepend(lazypath)
 -- vim.g.mapleader = " "
 -- vim.g.maplocalleader = "\\"
 
+-- Load local config
+local local_config = {}
+local status_ok, local_conf = pcall(require, "config.local")
+if status_ok then
+  local_config = local_conf
+end
+
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
@@ -33,6 +40,5 @@ require("lazy").setup({
   -- colorscheme that will be used when installing plugins.
   install = { colorscheme = { "habamax" } },
   -- automatically check for plugin updates
-  checker = { enabled = true },
+  checker = { enabled = local_config.disable_lazy_update_checker ~= true },
 })
-
