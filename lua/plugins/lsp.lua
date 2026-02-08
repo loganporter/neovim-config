@@ -61,6 +61,7 @@ return {
         "rust_analyzer",
         "eslint",
         "graphql",
+        "biome",
       },
       handlers = {
         function(server_name)
