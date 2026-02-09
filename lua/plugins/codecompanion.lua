@@ -17,7 +17,7 @@ return {
           return require("codecompanion.adapters").extend("gemini", local_config.gemini)
         end
       end
-      if acp_adapters.gemini_cli then
+      if local_config.gemini_cli then
         acp_adapters.gemini = function()
           return require("codecompanion.adapters").extend("gemini_cli", local_config.gemini_cli)
         end
@@ -38,7 +38,7 @@ return {
         end
       end
       if local_config.claude_code then
-        acp_adapters.anthropic_code = function()
+        acp_adapters.claude_code = function()
           return require("codecompanion.adapters").extend("claude_code", local_config.claude_code)
         end
       end
