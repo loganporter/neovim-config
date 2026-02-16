@@ -54,6 +54,20 @@ return {
       end
     end
 
+    local default_tools = {}
+    if local_config and local_config.enable_tools_by_default then
+      default_tools = {
+        "cmd_runner",
+        "create_file",
+        "file_search",
+        "get_changed_files",
+        "grep_search",
+        "insert_edit_into_file",
+        "list_code_usages",
+        "read_file"
+      }
+    end
+
     require("codecompanion").setup({
       adapters = {
         http = http_adapters,
@@ -62,6 +76,11 @@ return {
       strategies = {
         chat = {
           adapter = chat_adapter,
+          tools = {
+            opts = {
+              default_tools = default_tools,
+            }
+          }
         },
         inline = {
           adapter = inline_adapter,

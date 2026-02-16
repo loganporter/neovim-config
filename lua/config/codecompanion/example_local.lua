@@ -49,4 +49,7 @@ M.claude_code = {
   }
 }
 
+-- Enable tools by default for all adapters. You can override this in the schema for specific adapters if needed.
+M.enable_tools_by_default = true
+
 return M
