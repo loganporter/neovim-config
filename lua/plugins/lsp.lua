@@ -70,15 +70,29 @@ return {
           })
         end,
         eslint = function()
-          require("lspconfig").eslint.setup({
-            capabilities = capabilities,
-            on_attach = function(client, bufnr)
-              vim.api.nvim_create_autocmd("BufWritePre", {
-                buffer = bufnr,
-                command = "EslintFixAll",
-              })
-            end,
-          })
+          local uv = vim.loop or vim.uv
+          local cwd = vim.fn.getcwd()
+          if uv.fs_stat(cwd .. "/biome.json") or uv.fs_stat(cwd .. "/biome.jsonc") then
+            require("lspconfig").biome.setup({
+              capabilities = capabilities,
+              on_attach = function(client, bufnr)
+                vim.api.nvim_create_autocmd("BufWritePre", {
+                  buffer = bufnr,
+                  command = "BiomeFixAll",
+                })
+              end,
+            })
+          else
+            require("lspconfig").eslint.setup({
+              capabilities = capabilities,
+              on_attach = function(client, bufnr)
+                vim.api.nvim_create_autocmd("BufWritePre", {
+                  buffer = bufnr,
+                  command = "EslintFixAll",
+                })
+              end,
+            })
+          end
         end,
         graphql = function()
           require("lspconfig").graphql.setup({
