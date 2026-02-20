@@ -3,9 +3,9 @@
 
 local M = {}
 
-M.chat_adapter = "gemini_cli" -- or "copilot", "gemini", "ollama", "anthropic"
+M.chat_adapter = "gemini_cli" -- or "copilot", "copilot_cli", "gemini", "ollama", "anthropic"
 M.inline_adapter = "copilot"  -- or "gemini", "ollama", "anthropic"
-M.agent_adapter = "copilot"   -- or "gemini", "copilot", "ollama", "anthropic"
+M.agent_adapter = "copilot"   -- or "gemini", "copilot", "copilot_cli", "ollama", "anthropic"
 
 M.gemini = {
   adapter = "gemini",
@@ -48,6 +48,8 @@ M.claude_code = {
     CLAUDE_CODE_OAUTH_TOKEN = "Token here"
   }
 }
+
+M.copilot_cli = {} -- uses GitHub auth from `copilot` CLI login
 
 -- Enable tools by default for all adapters. You can override this in the schema for specific adapters if needed.
 M.enable_tools_by_default = true
