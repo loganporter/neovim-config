@@ -42,6 +42,7 @@ keymap.set("n", "<leader>e", "<Cmd>NvimTreeFocus<CR>", { desc = "Focus NvimTree"
 keymap.set("n", "<leader>tr", "<Cmd>NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
 keymap.set("n", "<leader>tf", "<Cmd>NvimTreeFindFile<CR>", { desc = "Find file in NvimTree" })
 keymap.set("n", "<leader>tc", "<Cmd>NvimTreeCollapse<CR>", { desc = "Collapse NvimTree" })
+keymap.set("n", "<leader>tx", function() require("nvim-tree.api").fs.clear_clipboard() end, { desc = "Clear NvimTree clipboard" })
 
 -- General keymaps
 -- toggle line wrap
