@@ -6,7 +6,10 @@ return {
 
     require("lualine").setup({
       options = {
-        theme = "vscode"
+        theme = "vscode",
+        refresh = {
+          statusline = 80,
+        },
       },
       sections = {
         lualine_x = { codecompanion_lualine, "diagnostics", "encoding", "fileformat", "filetype" }
