@@ -8,7 +8,7 @@ return {
       options = {
         theme = "vscode",
         refresh = {
-          statusline = 80,
+          statusline = 120,
         },
       },
       sections = {
