@@ -41,6 +41,21 @@ return {
       }
     })
 
+    vim.keymap.set('n', 'K', function()
+      vim.lsp.buf.hover({
+        border = {
+          { " ", "NormalFloat" },
+          { " ", "NormalFloat" },
+          { " ", "NormalFloat" },
+          { " ", "NormalFloat" },
+          { " ", "NormalFloat" },
+          { " ", "NormalFloat" },
+          { " ", "NormalFloat" },
+          { " ", "NormalFloat" },
+        },
+      })
+    end, { desc = 'Hover' })
+
     -- Diagnostic signs
     local signs = {
       Error = " ",
