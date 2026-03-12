@@ -139,9 +139,11 @@ keymap.set("n", "<leader>cl", "<cmd>lclose<CR>", { desc = "Close location list" 
 -- GitGraph keymaps
 keymap.set("n", "<leader>gg", function()
   require("gitgraph").draw({}, { all = true, max_count = 5000 })
+  vim.bo.buflisted = true
 end, { desc = "Open GitGraph" })
 keymap.set("n", "<leader>gb", function()
   require("gitgraph").draw({}, { all = false, max_count = 5000 })
+  vim.bo.buflisted = true
 end, { desc = "Open GitGraph for current branch" })
 
 -- Lazygit keymap
