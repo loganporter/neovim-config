@@ -10,7 +10,6 @@ return {
     local acp_adapters = {}
     local chat_adapter = "copilot"   -- default chat adapter
     local inline_adapter = "copilot" -- default inline adapter
-    local agent_adapter = "copilot"  -- default agent adapter
     if local_ok then
       if local_config.gemini then
         http_adapters.gemini = function()
@@ -101,21 +100,17 @@ return {
       if local_config.inline_adapter then
         inline_adapter = local_config.inline_adapter
       end
-      if local_config.agent_adapter then
-        agent_adapter = local_config.agent_adapter
-      end
     end
 
     local default_tools = {}
     if local_config and local_config.enable_tools_by_default then
       default_tools = {
-        "cmd_runner",
+        "run_command",
         "create_file",
         "file_search",
         "get_changed_files",
         "grep_search",
         "insert_edit_into_file",
-        "list_code_usages",
         "read_file"
       }
     end
@@ -125,7 +120,7 @@ return {
         http = http_adapters,
         acp = acp_adapters,
       },
-      strategies = {
+      interactions = {
         chat = {
           adapter = chat_adapter,
           tools = {
@@ -136,9 +131,6 @@ return {
         },
         inline = {
           adapter = inline_adapter,
-        },
-        agent = {
-          adapter = agent_adapter,
         },
       },
     })
