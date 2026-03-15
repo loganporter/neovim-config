@@ -6,6 +6,16 @@ return {
   },
   config = function()
     local local_ok, local_config = pcall(require, "config.codecompanion.local")
+
+    -- MCP servers config for HTTP adapters (copilot, gemini, ollama, anthropic).
+    -- ACP adapters (copilot_cli, claude_code) manage MCP servers separately:
+    --   copilot_cli: configure via ~/.copilot/mcp-config.json or `/mcp add`
+    --   claude_code: configure via ~/.claude/claude_desktop_config.json
+    local mcp_ok, mcp_servers = pcall(require, "config.codecompanion.mcp_servers")
+    if not mcp_ok then
+      mcp_servers = {}
+    end
+
     local http_adapters = {}
     local acp_adapters = {}
     local chat_adapter = "copilot"   -- default chat adapter
@@ -131,6 +141,12 @@ return {
         },
         inline = {
           adapter = inline_adapter,
+        },
+      },
+      mcp = {
+        servers = mcp_servers,
+        opts = {
+          default_servers = vim.tbl_keys(mcp_servers),
         },
       },
     })
