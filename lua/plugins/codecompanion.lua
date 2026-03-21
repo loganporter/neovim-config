@@ -8,8 +8,8 @@ return {
     local local_ok, local_config = pcall(require, "config.codecompanion.local")
 
     -- MCP servers config for HTTP adapters (copilot, gemini, ollama, anthropic).
-    -- ACP adapters (copilot_cli, claude_code) manage MCP servers separately:
-    --   copilot_cli: configure via ~/.copilot/mcp-config.json or `/mcp add`
+    -- ACP adapters (copilot_acp, claude_code) manage MCP servers separately:
+    --   copilot_acp: configure via ~/.copilot/mcp-config.json or `/mcp add`
     --   claude_code: configure via ~/.claude/claude_desktop_config.json
     local mcp_ok, mcp_servers = pcall(require, "config.codecompanion.mcp_servers")
     if not mcp_ok then
@@ -51,56 +51,9 @@ return {
           return require("codecompanion.adapters").extend("claude_code", local_config.claude_code)
         end
       end
-      if local_config.copilot_cli then
-        acp_adapters.copilot_cli = function()
-          local helpers = require("codecompanion.adapters.acp.helpers")
-          local adapter = {
-            name = "copilot_cli",
-            formatted_name = "Copilot CLI",
-            type = "acp",
-            roles = {
-              llm = "assistant",
-              user = "user",
-            },
-            opts = {
-              vision = true,
-            },
-            commands = {
-              default = {
-                "copilot",
-                "--acp",
-              },
-              yolo = {
-                "copilot",
-                "--acp",
-                "--allow-all",
-              },
-            },
-            defaults = {
-              mcpServers = {},
-              timeout = 20000,
-            },
-            parameters = {
-              protocolVersion = 1,
-              clientCapabilities = {
-                fs = { readTextFile = true, writeTextFile = true },
-              },
-              clientInfo = {
-                name = "CodeCompanion.nvim",
-                version = "1.0.0",
-              },
-            },
-            handlers = {
-              setup = function(self)
-                return true
-              end,
-              form_messages = function(self, messages, capabilities)
-                return helpers.form_messages(self, messages, capabilities)
-              end,
-              on_exit = function(self, code) end,
-            },
-          }
-          return require("codecompanion.adapters").extend(adapter, local_config.copilot_cli)
+      if local_config.copilot_acp then
+        acp_adapters.copilot_acp = function()
+          return require("codecompanion.adapters").extend("copilot_acp", local_config.copilot_acp)
         end
       end
 
