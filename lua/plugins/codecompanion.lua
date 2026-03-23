@@ -78,7 +78,17 @@ return {
       }
     end
 
+    local config_dir = vim.fn.stdpath("config")
+
     require("codecompanion").setup({
+      prompt_library = {
+        markdown = {
+          dirs = {
+            config_dir .. "/.prompts",
+            config_dir .. "/.prompts.local",
+          },
+        },
+      },
       adapters = {
         http = http_adapters,
         acp = acp_adapters,

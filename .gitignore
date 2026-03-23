@@ -3,3 +3,4 @@ spell/en.utf-8.local.add
 spell/en.utf-8.local.add.spl
 lua/config/local.lua
 lua/config/codecompanion/mcp_servers.lua
+.prompts.local/
