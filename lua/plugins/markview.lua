@@ -8,9 +8,8 @@ return {
         enable = true,
         filetypes = { 'markdown', 'codecompanion' },
         condition = function(buffer)
-          if vim.bo[buffer].filetype == 'codecompanion' then
-            return true
-          end
+          local ft = vim.bo[buffer].filetype
+          return ft == 'markdown' or ft == 'codecompanion'
         end,
       },
     })
