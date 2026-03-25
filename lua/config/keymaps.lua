@@ -86,6 +86,9 @@ keymap.set("n", "<leader>tv", ":vsplit | terminal<CR>", { desc = "Open terminal 
 keymap.set("n", "<leader>tn", ":tabnew | terminal<CR>", { desc = "Open terminal in new tab" })
 -- Terminal Mode Escape
 keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+-- Pass Option+Arrow keys to terminal for word navigation
+keymap.set("t", "<A-Right>", "<A-Right>", { desc = "Word forward in terminal", noremap = true })
+keymap.set("t", "<A-Left>", "<A-Left>", { desc = "Word backward in terminal", noremap = true })
 
 -- Diagnostic keymaps
 keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic" })
