@@ -5,8 +5,36 @@ return {
     local lint = require("lint")
     local uv = vim.loop or vim.uv
     local cwd = vim.fn.getcwd()
-    local use_biome = uv.fs_stat(cwd .. "/biome.json") or uv.fs_stat(cwd .. "/biome.jsonc")
-    if use_biome then
+
+    local eslint_configs = {
+      ".eslintrc",
+      ".eslintrc.json",
+      ".eslintrc.js",
+      ".eslintrc.cjs",
+      ".eslintrc.yaml",
+      ".eslintrc.yml",
+      "eslint.config.js",
+      "eslint.config.mjs",
+      "eslint.config.cjs",
+    }
+
+    local use_eslint = false
+    for _, config in ipairs(eslint_configs) do
+      if uv.fs_stat(cwd .. "/" .. config) then
+        use_eslint = true
+        break
+      end
+    end
+
+    if use_eslint then
+      lint.linters_by_ft = {
+        javascript = { "eslint" },
+        typescript = { "eslint" },
+        javascriptreact = { "eslint" },
+        typescriptreact = { "eslint" },
+        python = { "ruff" },
+      }
+    else
       lint.linters_by_ft = {
         javascript = { "biomejs" },
         typescript = { "biomejs" },
@@ -18,14 +46,6 @@ return {
         json = { "biomejs" },
         yaml = { "biomejs" },
         markdown = { "biomejs" },
-        python = { "ruff" },
-      }
-    else
-      lint.linters_by_ft = {
-        javascript = { "eslint" },
-        typescript = { "eslint" },
-        javascriptreact = { "eslint" },
-        typescriptreact = { "eslint" },
         python = { "ruff" },
       }
     end
