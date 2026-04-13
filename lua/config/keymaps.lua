@@ -198,6 +198,11 @@ keymap.set("n", "zM", require("ufo").closeAllFolds, { desc = "Close all folds" }
 keymap.set("n", "zr", require("ufo").openAllFolds, { desc = "Open all folds" })
 keymap.set("n", "zm", require("ufo").closeAllFolds, { desc = "Close all folds" })
 
+-- Grug-far keymaps
+keymap.set("n", "<leader>sr", "<cmd>GrugFar<CR>", { desc = "Search and replace (grug-far)" })
+keymap.set("v", "<leader>sr", ":<C-u>lua require('grug-far').with_visual_selection()<CR>",
+  { desc = "Search and replace visual selection (grug-far)", noremap = true, silent = true })
+
 -- Lazy keymaps
 keymap.set("n", "<leader>lu", "<cmd>Lazy update<CR>", { desc = "Update Lazy" })
 keymap.set("n", "<leader>lp", "<cmd>Lazy restore<CR>", { desc = "Restore Lazy" })
