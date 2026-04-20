@@ -20,6 +20,7 @@ return {
     local acp_adapters = {}
     local chat_adapter = "copilot"   -- default chat adapter
     local inline_adapter = "copilot" -- default inline adapter
+    local cli = nil
     if local_ok then
       if local_config.gemini then
         http_adapters.gemini = function()
@@ -63,6 +64,10 @@ return {
       if local_config.inline_adapter then
         inline_adapter = local_config.inline_adapter
       end
+
+      if local_config.cli then
+        cli = local_config.cli
+      end
     end
 
     local default_tools = {}
@@ -105,6 +110,7 @@ return {
         inline = {
           adapter = inline_adapter,
         },
+        cli = cli,
       },
       mcp = {
         servers = mcp_servers,
