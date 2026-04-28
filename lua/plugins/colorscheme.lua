@@ -25,6 +25,12 @@ return {
       GitGraphBranch3 = { fg = "#b39ddb" },
       GitGraphBranch4 = { fg = "#64b5f6" },
       GitGraphBranch5 = { fg = "#e5c07b" },
+      -- Diffview background overrides
+      DiffAdd = { bg = "#103010" },
+      DiffChange = { bg = "#101525" },
+      DiffText = { bg = "#4d0000" },
+      -- keep the filler background the same as the default background
+      DiffviewDiffDeleteDim = { fg = "#444444", bg = "NONE" },
     },
   }
 }

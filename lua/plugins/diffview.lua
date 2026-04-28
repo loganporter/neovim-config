@@ -3,6 +3,8 @@ return {
   dependencies = { "nvim-lua/plenary.nvim" },
   config = function()
     vim.opt.fillchars:append { diff = "╱" }
-    require("diffview").setup({})
+    require("diffview").setup({
+      enhanced_diff_hl = true,
+    })
   end,
 }
