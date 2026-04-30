@@ -10,9 +10,6 @@ return {
       Pmenu = { bg = "#000000" },
       -- Spell check overrides
       SpellBad = { undercurl = true, sp = "#5c82bf" },
-      -- Override here is for git graph
-      DiffDelete = { fg = "#444444", bg = "NONE" },
-      DiffRemoved = { fg = "#444444", bg = "NONE" },
       -- GitGraph highlight groups
       GitGraphHash = { fg = "#6c757d" },
       GitGraphTimestamp = { fg = "#adb5bd" },
@@ -29,6 +26,7 @@ return {
       DiffAdd = { bg = "#103010" },
       DiffChange = { bg = "#101525" },
       DiffText = { bg = "#4d0000" },
+      DiffDelete = { bg = "#4d0000" },
       -- keep the filler background the same as the default background
       DiffviewDiffDeleteDim = { fg = "#444444", bg = "NONE" },
     },
