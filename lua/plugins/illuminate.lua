@@ -1,6 +1,8 @@
 return {
   'RRethy/vim-illuminate',
-  -- config = function()
-  --   vim.g.Illuminate_highlightUnderCursor = 1
-  -- end
+  config = function()
+    require("illuminate").configure({
+      filetypes_denylist = { "sh", "bash", "zsh" },
+    })
+  end
 }
