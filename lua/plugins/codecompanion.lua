@@ -105,7 +105,15 @@ return {
             opts = {
               default_tools = default_tools,
             }
-          }
+          },
+          keymaps = {
+            clear = {
+              modes = {
+                n = "gX",
+                v = "gX",
+              }
+            }
+          },
         },
         inline = {
           adapter = inline_adapter,

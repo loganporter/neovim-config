@@ -7,6 +7,7 @@ return {
       preview = {
         enable = true,
         filetypes = { 'markdown', 'codecompanion' },
+        map_gx = false,
         condition = function(buffer)
           local ft = vim.bo[buffer].filetype
           return ft == 'markdown' or ft == 'codecompanion'
