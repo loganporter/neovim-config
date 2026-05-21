@@ -3,6 +3,7 @@ return {
   dependencies = {
     "nvim-lua/plenary.nvim",
     "nvim-treesitter/nvim-treesitter",
+    "ravitemer/codecompanion-history.nvim",
   },
   config = function()
     local local_ok, local_config = pcall(require, "config.codecompanion.local")
@@ -20,6 +21,7 @@ return {
     local acp_adapters = {}
     local chat_adapter = "copilot"   -- default chat adapter
     local inline_adapter = "copilot" -- default inline adapter
+    local continue_last_chat = false
     local cli = nil
     if local_ok then
       if local_config.gemini then
@@ -68,6 +70,9 @@ return {
       if local_config.cli then
         cli = local_config.cli
       end
+      if local_config.continue_last_chat ~= nil then
+        continue_last_chat = local_config.continue_last_chat
+      end
     end
 
     local default_tools = {}
@@ -84,6 +89,9 @@ return {
     end
 
     local config_dir = vim.fn.stdpath("config")
+
+    local history_dir = vim.fn.stdpath("data") .. "/codecompanion-history"
+    vim.fn.mkdir(history_dir, "p")
 
     require("codecompanion").setup({
       prompt_library = {
@@ -124,6 +132,16 @@ return {
         servers = mcp_servers,
         opts = {
           default_servers = vim.tbl_keys(mcp_servers),
+        },
+      },
+      extensions = {
+        history = {
+          enabled = true,
+          opts = {
+            auto_save = true,
+            continue_last_chat = continue_last_chat,
+            dir_to_save = history_dir,
+          },
         },
       },
     })

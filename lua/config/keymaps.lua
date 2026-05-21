@@ -160,6 +160,7 @@ keymap.set({ "n", "v" }, "<leader>ci", "<cmd>CodeCompanionCLI<CR>", { desc = "Op
 keymap.set({ "n", "v" }, "<leader>ct", "<cmd>CodeCompanionChat Toggle<CR>", { desc = "Toggle CodeCompanion" })
 keymap.set({ "n", "v" }, "<leader>ch", "<cmd>CodeCompanion<CR>", { desc = "Open inline CodeCompanion" })
 keymap.set("v", "<leader>ca", "<cmd>CodeCompanionChat Add<CR>", { desc = "Add visual selection to CodeCompanion" })
+keymap.set({ "n", "v" }, "<leader>cr", "<cmd>CodeCompanionHistory<CR>", { desc = "Open CodeCompanion history" })
 
 -- Copilot keymaps
 -- Accept suggestion
