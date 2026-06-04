@@ -115,12 +115,7 @@ return {
             }
           },
           keymaps = {
-            clear = {
-              modes = {
-                n = "gX",
-                v = "gX",
-              }
-            }
+            clear = false,
           },
         },
         inline = {
