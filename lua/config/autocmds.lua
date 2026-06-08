@@ -14,6 +14,14 @@ vim.api.nvim_create_autocmd({ "BufLeave", "FocusLost" }, {
   end,
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "gitgraph",
+  callback = function(event)
+    vim.bo[event.buf].modified = false
+    vim.bo[event.buf].bufhidden = "wipe"
+  end,
+})
+
 local filepathname = vim.fn.fnamemodify(vim.fn.getcwd(), ":~")
 vim.opt.titlestring = "nvim - " .. filepathname:gsub("^~/code/", "")
 vim.opt.title = true

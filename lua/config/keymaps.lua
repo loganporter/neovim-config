@@ -141,13 +141,18 @@ keymap.set("n", "<leader>cq", "<cmd>cclose<CR>", { desc = "Close quickfix list" 
 keymap.set("n", "<leader>cl", "<cmd>lclose<CR>", { desc = "Close location list" })
 
 -- GitGraph keymaps
+local function open_gitgraph(args)
+  require("gitgraph").draw({}, args)
+  local buf = vim.api.nvim_get_current_buf()
+  vim.bo[buf].buflisted = true
+  vim.bo[buf].modified = false
+end
+
 keymap.set("n", "<leader>gg", function()
-  require("gitgraph").draw({}, { all = true, max_count = 5000 })
-  vim.bo.buflisted = true
+  open_gitgraph({ all = true, max_count = 5000 })
 end, { desc = "Open GitGraph" })
 keymap.set("n", "<leader>gb", function()
-  require("gitgraph").draw({}, { all = false, max_count = 5000 })
-  vim.bo.buflisted = true
+  open_gitgraph({ all = false, max_count = 5000 })
 end, { desc = "Open GitGraph for current branch" })
 
 -- Lazygit keymap
