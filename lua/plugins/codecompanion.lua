@@ -22,6 +22,8 @@ return {
     local chat_adapter = "copilot"   -- default chat adapter
     local inline_adapter = "copilot" -- default inline adapter
     local continue_last_chat = false
+    local auto_generate_title = true
+    local title_generation_adapter = nil
     local cli = nil
     if local_ok then
       if local_config.gemini then
@@ -72,6 +74,24 @@ return {
       end
       if local_config.continue_last_chat ~= nil then
         continue_last_chat = local_config.continue_last_chat
+      end
+      if local_config.auto_generate_title ~= nil then
+        auto_generate_title = local_config.auto_generate_title
+      end
+      if local_config.title_generation_adapter then
+        title_generation_adapter = local_config.title_generation_adapter
+      end
+    end
+
+    if not title_generation_adapter then
+      local has_http_chat_adapter = http_adapters[chat_adapter] ~= nil
+      if not has_http_chat_adapter then
+        local http_adapter_names = vim.tbl_keys(http_adapters)
+        if #http_adapter_names > 0 then
+          title_generation_adapter = http_adapter_names[1]
+        else
+          auto_generate_title = false
+        end
       end
     end
 
@@ -134,6 +154,10 @@ return {
           enabled = true,
           opts = {
             auto_save = true,
+            auto_generate_title = auto_generate_title,
+            title_generation_opts = {
+              adapter = title_generation_adapter,
+            },
             continue_last_chat = continue_last_chat,
             dir_to_save = history_dir,
           },

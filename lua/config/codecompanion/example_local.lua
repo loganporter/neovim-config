@@ -3,10 +3,11 @@
 
 local M = {}
 
-M.chat_adapter = "gemini_cli" -- or "copilot", "copilot_cli", "gemini", "ollama", "anthropic"
-M.inline_adapter = "copilot"  -- or "gemini", "ollama", "anthropic"
-M.agent_adapter = "copilot"   -- or "gemini", "copilot", "copilot_cli", "ollama", "anthropic"
-M.continue_last_chat = false  -- set true to auto-load the previous chat when opening a new one
+M.chat_adapter = "gemini_cli"          -- or "copilot", "copilot_cli", "gemini", "ollama", "anthropic"
+M.inline_adapter = "copilot"           -- or "gemini", "ollama", "anthropic"
+M.agent_adapter = "copilot"            -- or "gemini", "copilot", "copilot_cli", "ollama", "anthropic"
+M.title_generation_adapter = "copilot" -- or "gemini", "ollama", "anthropic"
+M.continue_last_chat = false           -- set true to auto-load the previous chat when opening a new one
 
 M.gemini = {
   adapter = "gemini",
