@@ -6,7 +6,8 @@ local M = {}
 M.chat_adapter = "gemini_cli"          -- or "copilot", "copilot_cli", "gemini", "ollama", "anthropic"
 M.inline_adapter = "copilot"           -- or "gemini", "ollama", "anthropic"
 M.agent_adapter = "copilot"            -- or "gemini", "copilot", "copilot_cli", "ollama", "anthropic"
-M.title_generation_adapter = "copilot" -- or "gemini", "ollama", "anthropic"
+M.title_generation_adapter = "copilot"    -- or "gemini", "ollama", "anthropic"
+M.title_generation_model = "claude-sonnet-4.6" -- model for the title adapter; pin this when chat_adapter is ACP (claude_code/gemini_cli) so titles don't reuse the chat's model. Must be enabled for your account (for Copilot, check the model picker)
 M.continue_last_chat = false           -- set true to auto-load the previous chat when opening a new one
 
 M.gemini = {

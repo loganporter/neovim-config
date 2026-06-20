@@ -24,6 +24,7 @@ return {
     local continue_last_chat = false
     local auto_generate_title = true
     local title_generation_adapter = nil
+    local title_generation_model = nil
     local cli = nil
     if local_ok then
       if local_config.gemini then
@@ -80,6 +81,9 @@ return {
       end
       if local_config.title_generation_adapter then
         title_generation_adapter = local_config.title_generation_adapter
+      end
+      if local_config.title_generation_model then
+        title_generation_model = local_config.title_generation_model
       end
     end
 
@@ -157,6 +161,12 @@ return {
             auto_generate_title = auto_generate_title,
             title_generation_opts = {
               adapter = title_generation_adapter,
+              -- When the chat adapter differs from the title adapter (e.g. a
+              -- claude_code/ACP chat falling back to copilot for titles), the
+              -- history extension reuses the chat's model unless we pin one
+              -- here. Without this, copilot receives a Claude model name and
+              -- returns `model_not_supported`.
+              model = title_generation_model,
             },
             continue_last_chat = continue_last_chat,
             dir_to_save = history_dir,
