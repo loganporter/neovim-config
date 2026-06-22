@@ -33,6 +33,11 @@ vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to left window", silent = tr
 vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to lower window", silent = true, noremap = true })
 vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to upper window", silent = true, noremap = true })
 vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to right window", silent = true, noremap = true })
+-- resize splits
+vim.keymap.set("n", "<leader><Left>", "<Cmd>vertical resize -4<CR>", { desc = "Shrink split width", silent = true })
+vim.keymap.set("n", "<leader><Right>", "<Cmd>vertical resize +4<CR>", { desc = "Grow split width", silent = true })
+vim.keymap.set("n", "<leader><Up>", "<Cmd>resize +2<CR>", { desc = "Grow split height", silent = true })
+vim.keymap.set("n", "<leader><Down>", "<Cmd>resize -2<CR>", { desc = "Shrink split height", silent = true })
 -- create a new empty buffer
 keymap.set({ "n", "v" }, "<leader>bn", ":enew<CR>", { desc = "New empty buffer" })
 keymap.set({ "n", "v" }, "<leader>bv", ":vnew<CR>", { desc = "New empty buffer in vertical split" })
