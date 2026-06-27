@@ -1,0 +1,4 @@
+keybinding:
+  universal:
+    return: <c-q>
+    quit: [q, <esc>]
