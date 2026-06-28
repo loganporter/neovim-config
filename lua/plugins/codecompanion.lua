@@ -176,5 +176,32 @@ return {
     })
 
     vim.opt.splitright = true
+
+    -- markview.nvim's nvim-cmp integration calls `cmp.setup.filetype` for every
+    -- filetype in its `preview.filetypes` list (which we extend with
+    -- "codecompanion"). That call replaces the per-filetype cmp config and drops
+    -- CodeCompanion's own completion sources, so `#` (editor context), `@`
+    -- (tools) and `/` (slash commands) stop triggering in the chat buffer.
+    -- Re-apply CodeCompanion's sources on top of whatever markview left behind.
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = { "codecompanion", "codecompanion_input" },
+      callback = function(args)
+        vim.schedule(function()
+          local ok, cmp = pcall(require, "cmp")
+          if not ok then
+            return
+          end
+          cmp.setup.filetype(vim.bo[args.buf].filetype, {
+            sources = vim.list_extend({
+              { name = "codecompanion_editor_context" },
+              { name = "codecompanion_slash_commands" },
+              { name = "codecompanion_tools" },
+              { name = "codecompanion_acp_commands" },
+              { name = "codecompanion_models" },
+            }, cmp.get_config().sources),
+          })
+        end)
+      end,
+    })
   end
 }
