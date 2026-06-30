@@ -3,7 +3,6 @@ return {
   config = function()
     require("gitsigns").setup({
       current_line_blame = true,
-      word_diff = true,
       preview_config = {
         border = { " ", " ", " ", " ", " ", " ", " ", " " },
         style = "minimal",
