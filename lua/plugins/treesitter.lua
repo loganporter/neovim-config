@@ -1,24 +1,26 @@
 return {
   "nvim-treesitter/nvim-treesitter",
-  branch = "master",
+  branch = "main",
   build = ":TSUpdate",
   config = function()
-    local configs = require("nvim-treesitter.configs")
+    require("nvim-treesitter").install({
+      "c", "lua", "vim", "vimdoc", "elixir", "javascript", "html", "python", "typescript", "tsx", "graphql", "json",
+      "yaml", "css", "scss", "bash", "markdown", "markdown_inline"
+    })
 
-    configs.setup({
-      ensure_installed = {
-        "c", "lua", "vim", "vimdoc", "elixir", "javascript", "html", "python", "typescript", "tsx", "graphql", "json",
-        "yaml", "css", "scss", "bash", "markdown", "markdown_inline"
-      },
-      sync_install = false,
-      highlight = {
-        enable = true,
-        -- Neovim 0.12 + bash parser can surface stale-node errors in decoration provider.
-        -- Fall back to Vim syntax highlighting for shell buffers.
-        disable = { "bash" },
-        additional_vim_regex_highlighting = { "bash" },
-      },
-      indent = { enable = true },
+    -- highlight + indent are enabled per-buffer on the main branch (the old
+    -- configs.setup highlight/indent modules no longer exist).
+    vim.api.nvim_create_autocmd("FileType", {
+      callback = function(ev)
+        local ft = vim.bo[ev.buf].filetype
+        -- Neovim 0.12 + bash parser can surface stale-node errors in the decoration
+        -- provider. Fall back to Vim syntax highlighting for shell buffers.
+        if ft == "sh" or ft == "bash" then
+          return
+        end
+        pcall(vim.treesitter.start)
+        vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+      end,
     })
 
     -- Guard set-lang-from-info-string! against stale treesitter nodes (neovim v0.12.0+).

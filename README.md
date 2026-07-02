@@ -20,6 +20,12 @@ and lazygit
 brew install lazygit
 ```
 
+and tree-sitter (the `tree-sitter` library is used by Neovim itself; the `tree-sitter-cli` is required by nvim-treesitter `main` to compile parsers locally — parsers are no longer bundled with the plugin)
+
+```bash
+brew install tree-sitter tree-sitter-cli
+```
+
 Then create the config directory
 
 ```bash
