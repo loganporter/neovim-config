@@ -26,6 +26,20 @@ return {
 
     require("fidget").setup({})
     require("mason").setup()
+    require("mason-lspconfig").setup({
+      ensure_installed = {
+        "ts_ls",
+        "lua_ls",
+        "ruff",
+        "rust_analyzer",
+        "eslint",
+        "graphql",
+        "biome",
+      },
+      -- We enable servers ourselves below via vim.lsp.enable so the
+      -- Biome/ESLint fallback stays under our control.
+      automatic_enable = false,
+    })
 
     -- Configure diagnostics
     vim.diagnostic.config({
@@ -64,74 +78,68 @@ return {
     end, { desc = 'Hover' })
 
 
-    require('mason-lspconfig').setup({
-      ensure_installed = {
-        "ts_ls",
-        "lua_ls",
-        "ruff",
-        "rust_analyzer",
-        "eslint",
-        "graphql",
-        "biome",
+    -- Native LSP config (nvim 0.11+). nvim-lspconfig ships the base server
+    -- definitions (cmd/root markers/filetypes) under its `lsp/` runtime dir;
+    -- vim.lsp.config() layers our overrides on top and vim.lsp.enable() starts them.
+
+    -- Defaults applied to every server.
+    vim.lsp.config("*", {
+      capabilities = capabilities,
+    })
+
+    vim.lsp.config("lua_ls", {
+      settings = {
+        Lua = {
+          runtime = {
+            version = "LuaJIT",
+          },
+          diagnostics = {
+            globals = { "vim", "love" },
+          },
+          workspace = {
+            library = {
+              vim.env.VIMRUNTIME,
+            },
+          },
+        },
       },
-      handlers = {
-        function(server_name)
-          require('lspconfig')[server_name].setup({
-            capabilities = capabilities,
-          })
-        end,
-        eslint = function()
-          local uv = vim.loop or vim.uv
-          local cwd = vim.fn.getcwd()
-          if uv.fs_stat(cwd .. "/biome.json") or uv.fs_stat(cwd .. "/biome.jsonc") then
-            require("lspconfig").biome.setup({
-              capabilities = capabilities,
-              on_attach = function(client, bufnr)
-                vim.api.nvim_create_autocmd("BufWritePre", {
-                  buffer = bufnr,
-                  command = "BiomeFixAll",
-                })
-              end,
-            })
-          else
-            require("lspconfig").eslint.setup({
-              capabilities = capabilities,
-              on_attach = function(client, bufnr)
-                vim.api.nvim_create_autocmd("BufWritePre", {
-                  buffer = bufnr,
-                  command = "EslintFixAll",
-                })
-              end,
-            })
-          end
-        end,
-        graphql = function()
-          require("lspconfig").graphql.setup({
-            capabilities = capabilities,
-            filetypes = { "graphql", "gql", "javascript", "javascriptreact", "typescript", "typescriptreact" },
-          })
-        end,
-        lua_ls = function()
-          require('lspconfig').lua_ls.setup({
-            capabilities = capabilities,
-            settings = {
-              Lua = {
-                runtime = {
-                  version = 'LuaJIT'
-                },
-                diagnostics = {
-                  globals = { 'vim', 'love' },
-                },
-                workspace = {
-                  library = {
-                    vim.env.VIMRUNTIME,
-                  }
-                }
-              }
-            }
+    })
+
+    vim.lsp.config("graphql", {
+      filetypes = { "graphql", "gql", "javascript", "javascriptreact", "typescript", "typescriptreact" },
+    })
+
+    -- Biome fix-all on save is handled by conform.nvim (biome-check), so we
+    -- don't wire up an LSP autocmd for it here.
+
+    -- ESLint provides a buffer-local LspEslintFixAll command via its base
+    -- on_attach; run it on save without overriding that on_attach.
+    vim.api.nvim_create_autocmd("LspAttach", {
+      callback = function(args)
+        local client = vim.lsp.get_client_by_id(args.data.client_id)
+        if client and client.name == "eslint" then
+          vim.api.nvim_create_autocmd("BufWritePre", {
+            buffer = args.buf,
+            command = "LspEslintFixAll",
           })
         end
-      }
+      end,
+    })
+
+    -- Prefer Biome when the project defines it, otherwise fall back to ESLint.
+    local uv = vim.uv or vim.loop
+    local cwd = vim.fn.getcwd()
+    local web_linter = (uv.fs_stat(cwd .. "/biome.json") or uv.fs_stat(cwd .. "/biome.jsonc"))
+        and "biome"
+        or "eslint"
+
+    vim.lsp.enable({
+      "ts_ls",
+      "lua_ls",
+      "ruff",
+      "rust_analyzer",
+      "graphql",
+      web_linter,
     })
 
     local cmp = require('cmp')
