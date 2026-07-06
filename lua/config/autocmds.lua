@@ -22,6 +22,31 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+-- On startup with no file arguments, open a terminal instead of the empty buffer.
+vim.api.nvim_create_autocmd("VimEnter", {
+  pattern = "*",
+  callback = function()
+    -- Only when nvim was launched bare: no file args, a single unnamed empty
+    -- buffer, and not reading from stdin (e.g. `git commit`, piped input).
+    if vim.fn.argc() == 0
+        and vim.api.nvim_buf_get_name(0) == ""
+        and vim.bo.buftype == ""
+        and vim.api.nvim_buf_line_count(0) == 1
+        and vim.api.nvim_buf_get_lines(0, 0, 1, false)[1] == ""
+    then
+      vim.cmd("terminal")
+      local term_win = vim.api.nvim_get_current_win()
+      require("nvim-tree.api").tree.open({ focus = false })
+      -- nvim-tree can still grab focus on open, so restore it on the next tick.
+      vim.schedule(function()
+        if vim.api.nvim_win_is_valid(term_win) then
+          vim.api.nvim_set_current_win(term_win)
+        end
+      end)
+    end
+  end,
+})
+
 local filepathname = vim.fn.fnamemodify(vim.fn.getcwd(), ":~")
 vim.opt.titlestring = "nvim - " .. filepathname:gsub("^~/code/", "")
 vim.opt.title = true
