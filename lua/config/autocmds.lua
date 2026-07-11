@@ -34,14 +34,21 @@ vim.api.nvim_create_autocmd("VimEnter", {
         and vim.api.nvim_buf_line_count(0) == 1
         and vim.api.nvim_buf_get_lines(0, 0, 1, false)[1] == ""
     then
-      vim.cmd("terminal")
-      local term_win = vim.api.nvim_get_current_win()
-      require("nvim-tree.api").tree.open({ focus = false })
-      -- nvim-tree can still grab focus on open, so restore it on the next tick.
+      -- Open the terminal after startup finishes. Opening it inline during
+      -- VimEnter makes it inherit the global `number` option; deferring lets
+      -- Neovim apply its usual terminal number suppression (which self-restores
+      -- for normal buffers, so it won't leak line numbers into files opened
+      -- later in this window), matching a terminal opened via <leader>tt.
       vim.schedule(function()
-        if vim.api.nvim_win_is_valid(term_win) then
-          vim.api.nvim_set_current_win(term_win)
-        end
+        vim.cmd("terminal")
+        local term_win = vim.api.nvim_get_current_win()
+        require("nvim-tree.api").tree.open({ focus = false })
+        -- nvim-tree can still grab focus on open, so restore it on the next tick.
+        vim.schedule(function()
+          if vim.api.nvim_win_is_valid(term_win) then
+            vim.api.nvim_set_current_win(term_win)
+          end
+        end)
       end)
     end
   end,
