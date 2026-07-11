@@ -4,10 +4,28 @@ return {
   lazy = false,              -- Load this colorscheme immediately
   opts = {
     terminal_colors = false, -- Disable terminal colours
+    -- Darken the theme's grey backgrounds. These override the base palette
+    -- (vscode.nvim's dark defaults are in the ~#1F–#2D range) so the shift
+    -- cascades to every derived group: editor, tabs, nvim-tree sidebar,
+    -- popups and the cursorline. The terminal stays pure black via the
+    -- separate `TerminalNormal` group in lua/config/autocmds.lua.
+    color_overrides = {
+      vscBack = "#141414",          -- main editor background
+      vscTabCurrent = "#141414",    -- active buffer/tab
+      vscTabOther = "#242424",      -- inactive buffers/tabs
+      vscTabOutside = "#1a1a1a",    -- bufferline background
+      vscLeftDark = "#1a1a1a",      -- nvim-tree / sidebar background
+      vscPopupBack = "#161616",     -- completion / popup menu background
+      vscCursorDarkDark = "#1a1a1a", -- cursorline
+    },
     group_overrides = {
       -- Override specific highlight groups
       NormalFloat = { bg = "#000000" },
       Pmenu = { bg = "#000000" },
+      -- Terminal windows get a pure black background. The definition lives
+      -- here alongside the other background colours; lua/config/autocmds.lua
+      -- applies it per-window via `winhighlight` when a terminal is shown.
+      TerminalNormal = { bg = "#000000" },
       -- Spell check overrides
       SpellBad = { undercurl = true, sp = "#5c82bf" },
       -- GitGraph highlight groups
