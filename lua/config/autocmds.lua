@@ -54,6 +54,27 @@ vim.api.nvim_create_autocmd("VimEnter", {
   end,
 })
 
+-- Give terminal windows a pure black background instead of the colorscheme's
+-- default dark grey. Done via a window-local `winhighlight` that remaps Normal
+-- to a black group, applied only while a terminal buffer is displayed and
+-- cleared when a normal buffer takes over the window (e.g. nvim-tree reusing
+-- the startup terminal window), so files keep their usual grey background.
+local TERM_WINHL = "Normal:TerminalNormal,NormalNC:TerminalNormal"
+local function set_terminal_hl()
+  vim.api.nvim_set_hl(0, "TerminalNormal", { bg = "#000000" })
+end
+set_terminal_hl()
+vim.api.nvim_create_autocmd("ColorScheme", { callback = set_terminal_hl })
+vim.api.nvim_create_autocmd({ "TermOpen", "BufWinEnter" }, {
+  callback = function()
+    if vim.bo.buftype == "terminal" then
+      vim.wo.winhighlight = TERM_WINHL
+    elseif vim.wo.winhighlight == TERM_WINHL then
+      vim.wo.winhighlight = ""
+    end
+  end,
+})
+
 local filepathname = vim.fn.fnamemodify(vim.fn.getcwd(), ":~")
 vim.opt.titlestring = "nvim - " .. filepathname:gsub("^~/code/", "")
 vim.opt.title = true
