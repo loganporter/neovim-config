@@ -125,6 +125,21 @@ return {
 
     vim.opt.splitright = true
 
+    -- markview can't render tables while `wrap` is on: for any table wider than
+    -- ~90% of the window it bails out and leaves the raw `| ... |` markdown (see
+    -- markview's renderers/markdown.lua, "BUG, wrap breaks table rendering").
+    -- We keep `wrap` on for readable prose, so wide tables fall back to raw
+    -- markdown. `linebreak`/`breakindent` at least make that fallback wrap at
+    -- word boundaries with indented continuation lines instead of mid-word.
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "codecompanion",
+      callback = function()
+        vim.wo.linebreak = true
+        vim.wo.breakindent = true
+      end,
+      desc = "Nicer soft-wrapping for CodeCompanion chat (incl. raw wide tables)",
+    })
+
     -- Register CodeCompanion's completion source (`#` editor context, `@` tools,
     -- `/` slash commands) with blink.cmp for the chat buffers. This uses blink's
     -- additive `add_filetype_source`, so it composes with any other sources
