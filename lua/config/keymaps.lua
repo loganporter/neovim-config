@@ -33,11 +33,28 @@ vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to left window", silent = tr
 vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to lower window", silent = true, noremap = true })
 vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to upper window", silent = true, noremap = true })
 vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to right window", silent = true, noremap = true })
+-- always move the divider left/right regardless of which pane is focused
+local function move_divider(dir, amount)
+  local has_right = vim.fn.winnr("l") ~= vim.fn.winnr()
+  -- moving right: grow current if it has a right neighbor, else shrink it (moves its left divider right)
+  -- moving left: mirror of the above
+  local sign = (dir == "right") == has_right and "+" or "-"
+  vim.cmd("vertical resize " .. sign .. amount)
+end
 -- resize splits
-vim.keymap.set("n", "<leader><Left>", "<Cmd>vertical resize -4<CR>", { desc = "Shrink split width", silent = true })
-vim.keymap.set("n", "<leader><Right>", "<Cmd>vertical resize +4<CR>", { desc = "Grow split width", silent = true })
+vim.keymap.set("n", "<leader><Left>", function() move_divider("left", 12) end,
+  { desc = "Move split divider left", silent = true })
+vim.keymap.set("n", "<leader><Right>", function() move_divider("right", 12) end,
+  { desc = "Move split divider right", silent = true })
 vim.keymap.set("n", "<leader><Up>", "<Cmd>resize +2<CR>", { desc = "Grow split height", silent = true })
 vim.keymap.set("n", "<leader><Down>", "<Cmd>resize -2<CR>", { desc = "Shrink split height", silent = true })
+-- hold to resize continuously
+vim.keymap.set("n", "<A-h>", function() move_divider("left", 3) end,
+  { desc = "Move split divider left (hold)", silent = true })
+vim.keymap.set("n", "<A-l>", function() move_divider("right", 3) end,
+  { desc = "Move split divider right (hold)", silent = true })
+vim.keymap.set("n", "<A-j>", "<Cmd>resize +2<CR>", { desc = "Grow split height (hold)", silent = true })
+vim.keymap.set("n", "<A-k>", "<Cmd>resize -2<CR>", { desc = "Shrink split height (hold)", silent = true })
 -- create a new empty buffer
 keymap.set({ "n", "v" }, "<leader>bn", ":enew<CR>", { desc = "New empty buffer" })
 keymap.set({ "n", "v" }, "<leader>bv", ":vnew<CR>", { desc = "New empty buffer in vertical split" })
