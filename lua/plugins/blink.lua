@@ -14,6 +14,10 @@ return {
     appearance = { nerd_font_variant = "mono" },
     completion = {
       documentation = { auto_show = true },
+      -- Don't preselect the first item, so <CR> inserts a newline instead of
+      -- accepting a suggestion. Press <Down> (or <C-n>) to select an item,
+      -- then <CR> to accept it.
+      list = { selection = { preselect = false, auto_insert = false } },
       -- Insert () after functions/methods on accept — replaces the old
       -- nvim-autopairs + cmp `confirm_done` integration.
       accept = { auto_brackets = { enabled = true } },
