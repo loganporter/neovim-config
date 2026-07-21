@@ -26,8 +26,15 @@ return {
       -- here alongside the other background colours; lua/config/autocmds.lua
       -- applies it per-window via `winhighlight` when a terminal is shown.
       TerminalNormal = { bg = "#000000" },
-      -- Spell check overrides
+      -- Spell check overrides. Only underline genuine misspellings
+      -- (SpellBad). SpellRare/SpellLocal fire on valid-but-uncommon or
+      -- other-region words (e.g. US spellings under en_nz) and SpellCap on
+      -- capitalisation; clearing them stops the blue underlines on technical
+      -- terms while keeping real misspellings flagged.
       SpellBad = { undercurl = true, sp = "#5c82bf" },
+      SpellRare = {},
+      SpellLocal = {},
+      SpellCap = {},
       -- GitGraph highlight groups
       GitGraphHash = { fg = "#6c757d" },
       GitGraphTimestamp = { fg = "#adb5bd" },
