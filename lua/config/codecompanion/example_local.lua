@@ -51,6 +51,20 @@ M.claude_code = {
 
 M.copilot_cli = {} -- uses GitHub auth from `copilot` CLI login
 
+-- Direct CLI agents for the `cli` interaction (`:CodeCompanionCLI`, mapped to
+-- <leader>ci). Spawns the CLI binary in a terminal split — separate from the
+-- `claude_code` ACP chat adapter.
+M.cli = {
+  agent = "claude", -- default agent used by `:CodeCompanionCLI` with no args
+  agents = {
+    claude = {
+      cmd = "claude", -- the Claude Code CLI binary (must be on PATH)
+      args = {},
+      description = "Claude Code CLI",
+    },
+  },
+}
+
 -- Enable tools by default for all adapters. You can override this in the schema for specific adapters if needed.
 M.enable_tools_by_default = true
 
