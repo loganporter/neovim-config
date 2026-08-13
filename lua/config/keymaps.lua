@@ -122,7 +122,7 @@ keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Set diagnostic
 -- LSP keymaps
 keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
 keymap.set({ "n", "v" }, "<leader>la", vim.lsp.buf.code_action, { desc = "Code action" })
-keymap.set({ "n", "v" }, "<leader>lr", ":LspRestart<CR>", { desc = "Restart LSP server" })
+keymap.set({ "n", "v" }, "<leader>lr", "<cmd>lsp restart<cr>", { desc = "Restart LSP server" })
 
 -- Diffview keymaps
 keymap.set("n", "<leader>dv", "<cmd>DiffviewOpen<cr>", { desc = "Open Diffview" })
