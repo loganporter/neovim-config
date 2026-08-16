@@ -54,7 +54,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
   end,
 })
 
--- Give terminal windows a pure black background instead of the colorscheme's
+-- Give terminal windows a pure black background instead of the colourscheme's
 -- default dark grey. Done via a window-local `winhighlight` that remaps Normal
 -- to the `TerminalNormal` group (defined in lua/plugins/colorscheme.lua),
 -- applied only while a terminal buffer is displayed and cleared when a normal

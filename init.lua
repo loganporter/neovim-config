@@ -31,34 +31,7 @@ vim.api.nvim_create_autocmd({ "BufWinEnter", "BufFilePost" }, {
   pattern = "*",
   callback = function()
     local ft = vim.bo.filetype
-    local spell_filetypes = {
-      "markdown",
-      "text",
-      "gitcommit",
-      "tex",
-      "rst",
-      "pandoc",
-      "asciidoc",
-      "org",
-      "lua",
-      "python",
-      "javascript",
-      "typescript",
-      "typescriptreact",
-      "javascriptreact",
-      "html",
-      "css",
-      "json",
-      "yaml",
-      "xml",
-      "sh",
-      "zsh",
-      "bash",
-      "fish",
-      "vim",
-      "rust",
-      "go",
-    }
+    local spell_filetypes = require('config.spellcheck').filetypes
     if vim.bo.buftype ~= "terminal" and vim.tbl_contains(spell_filetypes, ft) then
       vim.opt.spell = true
     else
