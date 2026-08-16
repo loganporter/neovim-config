@@ -54,6 +54,10 @@ local prose = {
 
 local MAX_FILE_SIZE = 512 * 1024
 
+-- Ignore misspellings shorter than this. Short "words" in code are almost always
+-- abbreviations, units or variable fragments rather than real typos.
+local MIN_WORD_LEN = 4
+
 --- Build a per-line byte mask of the spell-checkable regions in `content`.
 --- Returns nil when the language has no parser or no @spell captures.
 local function spell_mask(content, lines, lang)
@@ -165,7 +169,7 @@ local function check_file(path, items)
       local offset, text = run[1], run[2]
       for _, bad in ipairs(vim.spell.check(text)) do
         local word, kind, col = bad[1], bad[2], bad[3]
-        if kind == "bad" then
+        if kind == "bad" and vim.fn.strcharlen(word) >= MIN_WORD_LEN then
           items[#items + 1] = {
             filename = path,
             lnum = lnum,
