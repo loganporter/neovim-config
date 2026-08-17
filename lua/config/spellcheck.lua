@@ -202,9 +202,25 @@ local function list_files(root)
   return nil
 end
 
+-- Files scanned per event-loop tick. Each file costs a full treesitter parse,
+-- so the whole walk is far too slow to run in one go: 40 files measured ~240ms,
+-- which on a few-thousand-file repo is a multi-second freeze with no feedback.
+-- Yielding between chunks keeps the editor responsive and lets us report
+-- progress.
+local CHUNK_SIZE = 40
+
+-- Guards against a second scan being kicked off while one is still walking.
+local running = false
+
 --- Collect every misspelling under `root` (default: cwd) into the quickfix
---- list and open it with Telescope.
+--- list and open it with Telescope. Runs incrementally across event-loop ticks;
+--- the editor stays usable while it works.
 function M.workspace(root)
+  if running then
+    vim.notify("Spell check: already running", vim.log.levels.WARN)
+    return
+  end
+
   root = root or vim.uv.cwd()
 
   local files = list_files(root)
@@ -213,32 +229,67 @@ function M.workspace(root)
     return
   end
 
-  -- vim.spell.check() reads 'spelllang'/'spelloptions' from the current buffer,
-  -- and returns nothing at all while 'spell' is off in the current window.
-  local spell = vim.wo.spell
-  vim.wo.spell = true
+  local items, index, total = {}, 1, #files
+  running = true
 
-  local items = {}
-  local ok, err = pcall(function()
-    for _, name in ipairs(files) do
-      check_file(vim.fs.joinpath(root, name), items)
+  --- Transient one-line progress in the command area. `false` keeps it out of
+  --- `:messages`, so a scan doesn't bury the message history.
+  local function progress()
+    vim.api.nvim_echo(
+      { { string.format("Spell check: %d/%d files, %d found", index - 1, total, #items), "None" } },
+      false, {}
+    )
+  end
+
+  local function finish()
+    running = false
+    vim.api.nvim_echo({ { "", "None" } }, false, {}) -- clear the progress line
+
+    if #items == 0 then
+      vim.notify("Spell check: no misspellings found")
+      return
     end
-  end)
 
-  vim.wo.spell = spell
-
-  if not ok then
-    vim.notify("Spell check failed: " .. tostring(err), vim.log.levels.ERROR)
-    return
+    vim.fn.setqflist({}, " ", { title = "Spelling (" .. #items .. ")", items = items })
+    require("telescope.builtin").quickfix()
   end
 
-  if #items == 0 then
-    vim.notify("Spell check: no misspellings found")
-    return
+  local function process_chunk()
+    -- vim.spell.check() reads 'spelllang'/'spelloptions' from the current buffer,
+    -- and returns nothing at all while 'spell' is off in the current window.
+    -- Applied and restored per chunk rather than once around the whole walk,
+    -- because the user is free to move between windows while the scan runs.
+    local win = vim.api.nvim_get_current_win()
+    local spell = vim.wo[win].spell
+    vim.wo[win].spell = true
+
+    local ok, err = pcall(function()
+      local last = math.min(index + CHUNK_SIZE - 1, total)
+      for i = index, last do
+        check_file(vim.fs.joinpath(root, files[i]), items)
+      end
+      index = last + 1
+    end)
+
+    if vim.api.nvim_win_is_valid(win) then
+      vim.wo[win].spell = spell
+    end
+
+    if not ok then
+      running = false
+      vim.notify("Spell check failed: " .. tostring(err), vim.log.levels.ERROR)
+      return
+    end
+
+    if index > total then
+      finish()
+    else
+      progress()
+      vim.schedule(process_chunk)
+    end
   end
 
-  vim.fn.setqflist({}, " ", { title = "Spelling (" .. #items .. ")", items = items })
-  require("telescope.builtin").quickfix()
+  vim.schedule(process_chunk)
 end
 
 return M

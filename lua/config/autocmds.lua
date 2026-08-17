@@ -1,15 +1,40 @@
 -- Auto-save modified buffers when leaving a buffer or losing focus.
 -- Skips special buffers (help, terminal, etc.) and gitgraph buffers,
 -- which would otherwise get written as files in the working directory.
-vim.api.nvim_create_autocmd({ "BufLeave", "FocusLost" }, {
+--
+-- Each write fires BufWritePre, which runs conform's format-on-save (500ms
+-- timeout) and the LspEslintFixAll autocmd. So BufLeave saves only the buffer
+-- being left: sweeping every open buffer on each window switch meant formatting
+-- files you weren't editing, and blocked the UI for up to timeout x
+-- modified-buffer-count. FocusLost still sweeps -- there the whole editor is
+-- going into the background, so flushing everything is the point.
+local function save_buf(buf)
+  if vim.bo[buf].modified
+      and vim.bo[buf].buftype == ""
+      and vim.bo[buf].filetype ~= "gitgraph"
+      and vim.bo[buf].modifiable
+      and not vim.bo[buf].readonly
+      -- `:write` on a nameless buffer fails with E32 every time; skip it.
+      and vim.api.nvim_buf_get_name(buf) ~= ""
+  then
+    vim.api.nvim_buf_call(buf, function()
+      vim.cmd("silent! write")
+    end)
+  end
+end
+
+vim.api.nvim_create_autocmd("BufLeave", {
+  pattern = "*",
+  callback = function(args)
+    save_buf(args.buf)
+  end,
+})
+
+vim.api.nvim_create_autocmd("FocusLost", {
   pattern = "*",
   callback = function()
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-      if vim.bo[buf].modified and vim.bo[buf].filetype ~= "gitgraph" and vim.bo[buf].buftype == "" then
-        vim.api.nvim_buf_call(buf, function()
-          vim.cmd("silent! write")
-        end)
-      end
+      save_buf(buf)
     end
   end,
 })
