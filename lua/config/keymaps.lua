@@ -149,6 +149,49 @@ keymap.set("n", "<leader>dh", "<cmd>DiffviewFileHistory<cr>", { desc = "View Rep
 keymap.set("n", "<leader>dy", "<cmd>DiffviewFileHistory %<cr>", { desc = "View file history" })
 keymap.set("n", "<leader>da", "<cmd>DiffviewOpen --all<cr>", { desc = "Open Diffview with all changes" })
 
+-- Diff against the merge base with the main branch: the point this branch
+-- forked off, so the diff shows only this branch's work and not the commits
+-- main has picked up since. `<leader>dm` diffs against main's current tip,
+-- which mixes those in.
+local function git(dir, ...)
+  local out = vim.system({ "git", "-C", dir, ... }, { text = true }):wait()
+  if out.code ~= 0 then return nil end
+  return vim.trim(out.stdout or "")
+end
+
+local function main_branch(dir)
+  -- Whatever origin's HEAD points at wins; it's the repo's own answer.
+  local head = git(dir, "symbolic-ref", "--quiet", "refs/remotes/origin/HEAD")
+  if head and head ~= "" then
+    return head:gsub("^refs/remotes/", "")
+  end
+  for _, ref in ipairs({ "main", "master", "origin/main", "origin/master" }) do
+    if git(dir, "rev-parse", "--verify", "--quiet", ref .. "^{commit}") then
+      return ref
+    end
+  end
+  return nil
+end
+
+keymap.set("n", "<leader>db", function()
+  local dir = vim.fn.expand("%:p:h")
+  if vim.fn.isdirectory(dir) == 0 then dir = vim.uv.cwd() end
+
+  local base_branch = main_branch(dir)
+  if not base_branch then
+    vim.notify("No main/master branch found", vim.log.levels.WARN)
+    return
+  end
+
+  local base = git(dir, "merge-base", base_branch, "HEAD")
+  if not base or base == "" then
+    vim.notify("No common ancestor with " .. base_branch, vim.log.levels.WARN)
+    return
+  end
+
+  vim.cmd("DiffviewOpen " .. base)
+end, { desc = "Open Diffview vs merge base with main" })
+
 -- Gitsigns keymaps
 keymap.set("n", "<leader>hs", ":Gitsigns stage_hunk<CR>", { desc = "Stage hunk" })
 keymap.set("n", "<leader>hr", ":Gitsigns reset_hunk<CR>", { desc = "Reset hunk" })
