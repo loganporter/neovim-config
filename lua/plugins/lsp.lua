@@ -26,8 +26,7 @@ return {
         "graphql",
         "biome",
       },
-      -- We enable servers ourselves below via vim.lsp.enable so the
-      -- Biome/ESLint fallback stays under our control.
+      -- We enable servers ourselves below via vim.lsp.enable.
       automatic_enable = false,
     })
 
@@ -103,7 +102,9 @@ return {
     -- don't wire up an LSP autocmd for it here.
 
     -- ESLint provides a buffer-local LspEslintFixAll command via its base
-    -- on_attach; run it on save without overriding that on_attach.
+    -- on_attach; run it on save without overriding that on_attach. This only
+    -- fires in buffers ESLint actually attached to, which (see below) means
+    -- buffers in a real ESLint project.
     vim.api.nvim_create_autocmd("LspAttach", {
       callback = function(args)
         local client = vim.lsp.get_client_by_id(args.data.client_id)
@@ -116,20 +117,24 @@ return {
       end,
     })
 
-    -- Prefer Biome when the project defines it, otherwise fall back to ESLint.
-    local uv = vim.uv or vim.loop
-    local cwd = vim.fn.getcwd()
-    local web_linter = (uv.fs_stat(cwd .. "/biome.json") or uv.fs_stat(cwd .. "/biome.jsonc"))
-        and "biome"
-        or "eslint"
-
+    -- Both Biome and ESLint are enabled unconditionally: lspconfig's base
+    -- definitions set `workspace_required = true` and a `root_dir` that
+    -- searches upward from *the buffer's own file* for that tool's config,
+    -- declining to attach when there isn't one. So each server attaches only
+    -- in the projects that actually use it, and a Biome package and an ESLint
+    -- package can be open in the same session.
+    --
+    -- (Previously this picked one of the two once at startup based on the cwd,
+    -- which meant launching nvim from a monorepo root or from ~ locked the
+    -- whole session to the wrong server.)
     vim.lsp.enable({
       "ts_ls",
       "lua_ls",
       "ruff",
       "rust_analyzer",
       "graphql",
-      web_linter,
+      "biome",
+      "eslint",
     })
   end
 }

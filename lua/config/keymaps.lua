@@ -4,9 +4,16 @@ local keymap = vim.keymap
 keymap.set("n", "<leader>w", ":w<CR>", { desc = "Save" })
 
 -- Keymaps for BufferLine
--- Cycle through buffers
-keymap.set("n", "t", "<Cmd>BufferLineCycleNext<CR>", { desc = "Next buffer" })
-keymap.set("n", "T", "<Cmd>BufferLineCyclePrev<CR>", { desc = "Prev buffer" })
+-- Cycle through buffers. Shift is held down and l/h tapped repeatedly, so
+-- this keeps the "hold a modifier and tap" feel the old t/T bindings had.
+-- Those shadowed the `t`/`T` till-motions, which cost `dt,`, `ct)` and the
+-- rest of the operator+till family; H/L (jump to top/bottom of the visible
+-- window) are the much cheaper thing to give up.
+keymap.set("n", "<S-l>", "<Cmd>BufferLineCycleNext<CR>", { desc = "Next buffer" })
+keymap.set("n", "<S-h>", "<Cmd>BufferLineCyclePrev<CR>", { desc = "Prev buffer" })
+-- The screen-position motions H/L displaced above, kept within reach.
+keymap.set({ "n", "v" }, "<leader>H", "H", { desc = "Top of window" })
+keymap.set({ "n", "v" }, "<leader>L", "L", { desc = "Bottom of window" })
 -- Pick a buffer to close
 keymap.set("n", "<leader>bcp", "<Cmd>BufferLinePickClose<CR>", { desc = "Pick close buffer" })
 -- Pick a buffer
@@ -92,10 +99,17 @@ keymap.set("n", "<leader>sl", function()
     print("Local spell file not configured")
   end
 end, { desc = "Add word to local spell file" })
+-- Jump between misspellings. Remapped onto the capital-S variants, which stop
+-- only on SpellBad. Bare `]s`/`[s` also stop on SpellRare/SpellLocal/SpellCap,
+-- and lua/plugins/colorscheme.lua clears those three groups deliberately -- so
+-- they were landing on words with no visible underline.
+keymap.set({ "n", "v" }, "]s", "]S", { desc = "Next misspelling", remap = false })
+keymap.set({ "n", "v" }, "[s", "[S", { desc = "Prev misspelling", remap = false })
 -- no highlight
 keymap.set({ "n", "v" }, "<leader>n", ":noh<CR>", { desc = "No highlight", silent = true })
--- select all
-keymap.set({ "n", "v" }, "<C-a>", "ggVG", { desc = "Select all", noremap = true, silent = true })
+-- select all -- on <leader>a rather than <C-a>, which is vim's increment-number
+-- operator (and its <C-x> decrement counterpart).
+keymap.set({ "n", "v" }, "<leader>a", "ggVG", { desc = "Select all", noremap = true, silent = true })
 
 
 
@@ -113,9 +127,11 @@ keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 keymap.set("t", "<A-Right>", "<A-Right>", { desc = "Word forward in terminal", noremap = true })
 keymap.set("t", "<A-Left>", "<A-Left>", { desc = "Word backward in terminal", noremap = true })
 
--- Diagnostic keymaps
-keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic" })
-keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next diagnostic" })
+-- Diagnostic keymaps (goto_prev/goto_next are deprecated in favour of jump)
+keymap.set("n", "[d", function() vim.diagnostic.jump({ count = -1, float = true }) end,
+  { desc = "Go to previous diagnostic" })
+keymap.set("n", "]d", function() vim.diagnostic.jump({ count = 1, float = true }) end,
+  { desc = "Go to next diagnostic" })
 keymap.set("n", "<leader>ld", vim.diagnostic.open_float, { desc = "Open diagnostic float" })
 keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Set diagnostics to location list" })
 
@@ -143,26 +159,36 @@ keymap.set("n", "]h", ":Gitsigns next_hunk<CR>", { desc = "Next hunk" })
 keymap.set("n", "[h", ":Gitsigns prev_hunk<CR>", { desc = "Prev hunk" })
 
 -- Telescope keymaps
-local builtin = require('telescope.builtin')
-keymap.set('n', '<leader>ff', builtin.find_files, { desc = "Find files" })
-keymap.set('n', '<leader>fg', builtin.git_files, { desc = "Find git files" })
-keymap.set('n', '<leader>fl', builtin.live_grep, { desc = "Live grep" })
-keymap.set('n', ';', builtin.buffers, { desc = "Buffers" })
-keymap.set('n', '<leader>fb', builtin.current_buffer_fuzzy_find, { desc = "Current buffer fuzzy find" })
-keymap.set('n', '<leader>fh', builtin.help_tags, { desc = "Help tags" })
-keymap.set('n', '<leader>fk', builtin.keymaps, { desc = "Keymaps" })
-keymap.set('n', '<leader>fo', builtin.commands, { desc = "Commands" })
+-- Each picker is wrapped in a closure rather than resolved from a top-level
+-- `require('telescope.builtin')`: that require ran during init.lua, which both
+-- pulled all of telescope into startup and made the entire config fail to load
+-- if telescope wasn't installed yet. Deferring it lets lazy.nvim load telescope
+-- on first use.
+local function pick(name)
+  return function()
+    require('telescope.builtin')[name]()
+  end
+end
+
+keymap.set('n', '<leader>ff', pick('find_files'), { desc = "Find files" })
+keymap.set('n', '<leader>fg', pick('git_files'), { desc = "Find git files" })
+keymap.set('n', '<leader>fl', pick('live_grep'), { desc = "Live grep" })
+keymap.set('n', ';', pick('buffers'), { desc = "Buffers" })
+keymap.set('n', '<leader>fb', pick('current_buffer_fuzzy_find'), { desc = "Current buffer fuzzy find" })
+keymap.set('n', '<leader>fh', pick('help_tags'), { desc = "Help tags" })
+keymap.set('n', '<leader>fk', pick('keymaps'), { desc = "Keymaps" })
+keymap.set('n', '<leader>fo', pick('commands'), { desc = "Commands" })
 -- LSP related Telescope keymaps
-keymap.set('n', '<leader>fe', builtin.diagnostics, { desc = "Diagnostics" })
+keymap.set('n', '<leader>fe', pick('diagnostics'), { desc = "Diagnostics" })
 keymap.set('n', '<leader>fs', function()
   require("config.spellcheck").workspace()
 end, { desc = "Spelling errors (workspace)" })
-keymap.set('n', '<leader>fr', builtin.lsp_references, { desc = "LSP references" })
-keymap.set('n', '<leader>fi', builtin.lsp_implementations, { desc = "LSP implementations" })
-keymap.set('n', '<leader>fm', builtin.lsp_document_symbols, { desc = "LSP document symbols" })
-keymap.set('n', '<leader>fw', builtin.lsp_workspace_symbols, { desc = "LSP workspace symbols" })
-keymap.set('n', '<leader>fd', builtin.lsp_definitions, { desc = "LSP definitions" })
-keymap.set('n', '<leader>ft', builtin.lsp_type_definitions, { desc = "LSP Type definitions" })
+keymap.set('n', '<leader>fr', pick('lsp_references'), { desc = "LSP references" })
+keymap.set('n', '<leader>fi', pick('lsp_implementations'), { desc = "LSP implementations" })
+keymap.set('n', '<leader>fm', pick('lsp_document_symbols'), { desc = "LSP document symbols" })
+keymap.set('n', '<leader>fw', pick('lsp_workspace_symbols'), { desc = "LSP workspace symbols" })
+keymap.set('n', '<leader>fd', pick('lsp_definitions'), { desc = "LSP definitions" })
+keymap.set('n', '<leader>ft', pick('lsp_type_definitions'), { desc = "LSP Type definitions" })
 
 -- Close quickfix and location list
 keymap.set("n", "<leader>cq", "<cmd>cclose<CR>", { desc = "Close quickfix list" })
@@ -225,12 +251,11 @@ keymap.set("v", "<leader>f", ":<C-u>lua _G.VisualOperation('search')<CR>",
 keymap.set("v", "<leader>r", ":<C-u>lua _G.VisualOperation('replace_all')<CR>",
   { desc = "Find and replace all for visual selection", noremap = true, silent = true })
 
-
--- UFO keymaps
-keymap.set("n", "zR", require("ufo").openAllFolds, { desc = "Open all folds" })
-keymap.set("n", "zM", require("ufo").closeAllFolds, { desc = "Close all folds" })
-keymap.set("n", "zr", require("ufo").openAllFolds, { desc = "Open all folds" })
-keymap.set("n", "zm", require("ufo").closeAllFolds, { desc = "Close all folds" })
+-- UFO keymaps (deferred require, as with telescope above)
+keymap.set("n", "zR", function() require("ufo").openAllFolds() end, { desc = "Open all folds" })
+keymap.set("n", "zM", function() require("ufo").closeAllFolds() end, { desc = "Close all folds" })
+keymap.set("n", "zr", function() require("ufo").openAllFolds() end, { desc = "Open all folds" })
+keymap.set("n", "zm", function() require("ufo").closeAllFolds() end, { desc = "Close all folds" })
 
 -- Grug-far keymaps
 keymap.set("n", "<leader>sr", "<cmd>GrugFar<CR>", { desc = "Search and replace (grug-far)" })

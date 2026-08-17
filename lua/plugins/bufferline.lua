@@ -1,13 +1,11 @@
 return {
   'akinsho/bufferline.nvim',
   version = "*",
+  event = "VeryLazy",
   dependencies = {
     'nvim-tree/nvim-web-devicons',
-    'Mofiqul/vscode.nvim',
   },
-  config = function()
-    vim.cmd.colorscheme("vscode")
-    vim.opt.termguicolors = true
-    require('bufferline').setup {}
-  end
+  -- The colorscheme used to be applied from here, which made the whole theme
+  -- contingent on bufferline loading. It now lives in colorscheme.lua.
+  opts = {},
 }

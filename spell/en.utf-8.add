@@ -459,3 +459,5 @@ colourscheme's
 filetypes
 Neovim's
 erroring
+autocmd
+goto

@@ -1,15 +1,12 @@
 return {
   'nvim-telescope/telescope.nvim',
-  tag = '0.1.8', -- or, branch = '0.1.x',
+  -- Tracking master rather than the 0.1.8 tag. 0.1.8's treesitter previewer
+  -- called nvim-treesitter's `parsers.ft_to_lang` / `configs.is_enabled`, which
+  -- the `main` branch deleted -- so previews had to be downgraded to Vim regex
+  -- syntax. Master now uses core `vim.treesitter.language.get_lang` +
+  -- `vim.treesitter.start`, so treesitter previews work again.
+  branch = 'master',
+  cmd = 'Telescope',
   dependencies = { 'nvim-lua/plenary.nvim' },
-  config = function()
-    require('telescope').setup({
-      defaults = {
-        -- nvim-treesitter `main` removed parsers.ft_to_lang / configs.is_enabled,
-        -- which Telescope 0.1.8's treesitter previewer relies on. Disable it so
-        -- previews fall back to Vim regex `syntax` highlighting instead of erroring.
-        preview = { treesitter = false },
-      },
-    })
-  end
+  opts = {},
 }

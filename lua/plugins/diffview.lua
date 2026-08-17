@@ -1,5 +1,6 @@
 return {
   "sindrets/diffview.nvim",
+  cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewFileHistory" },
   dependencies = { "nvim-lua/plenary.nvim" },
   config = function()
     vim.opt.fillchars:append { diff = "╱" }

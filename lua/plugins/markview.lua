@@ -1,7 +1,8 @@
 return {
   'OXY2DEV/markview.nvim',
+  -- `lazy = false` used to sit here alongside `ft`, which silently cancelled
+  -- it (an explicit lazy=false always wins) and loaded markview at startup.
   ft = { 'markdown', 'codecompanion' },
-  lazy = false,
   config = function()
     require('markview').setup({
       preview = {

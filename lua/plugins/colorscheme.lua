@@ -2,6 +2,10 @@ return {
   "Mofiqul/vscode.nvim",
   priority = 1000,           -- Ensure this colorscheme is loaded first
   lazy = false,              -- Load this colorscheme immediately
+  config = function(_, opts)
+    require("vscode").setup(opts)
+    vim.cmd.colorscheme("vscode")
+  end,
   opts = {
     terminal_colors = false, -- Disable terminal colours
     -- Darken the theme's grey backgrounds. These override the base palette

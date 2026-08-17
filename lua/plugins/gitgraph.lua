@@ -1,5 +1,6 @@
 return {
   "isakbm/gitgraph.nvim",
+  lazy = true,
   dependencies = { "sindrets/diffview.nvim" },
 
   opts = {
