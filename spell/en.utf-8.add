@@ -463,3 +463,7 @@ autocmd
 goto
 ios
 xcodebuild
+setpoints
+async
+Monospaced
+vercel
