@@ -5,7 +5,7 @@ return {
   config = function()
     require("nvim-treesitter").install({
       "c", "lua", "vim", "vimdoc", "elixir", "javascript", "html", "python", "typescript", "tsx", "graphql", "json",
-      "yaml", "css", "scss", "bash", "markdown", "markdown_inline"
+      "yaml", "css", "scss", "bash", "markdown", "markdown_inline", "http"
     })
 
     -- highlight + indent are enabled per-buffer on the main branch (the old

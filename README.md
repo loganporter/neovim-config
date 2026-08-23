@@ -20,6 +20,12 @@ and lazygit
 brew install lazygit
 ```
 
+and resterm, the terminal API client driven by `<leader>rr` (optional -- everything else works without it)
+
+```bash
+brew install resterm
+```
+
 and tree-sitter (the `tree-sitter` library is used by Neovim itself; the `tree-sitter-cli` is required by nvim-treesitter `main` to compile parsers locally — parsers are no longer bundled with the plugin)
 
 ```bash

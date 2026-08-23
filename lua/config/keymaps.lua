@@ -255,6 +255,19 @@ end, { desc = "Open GitGraph for current branch" })
 -- Lazygit keymap
 keymap.set("n", "<leader>lg", "<cmd>LazyGit<CR>", { desc = "Open lazygit" })
 
+-- resterm keymaps. Same idea as lazygit above: an external TUI in a float.
+-- Lazy-required so the module (and its autocmd/user commands) only load on
+-- first use, matching the `pick` closures used for telescope.
+local function resterm(fn)
+  return function()
+    require("config.resterm")[fn]()
+  end
+end
+
+keymap.set("n", "<leader>rr", resterm("toggle"), { desc = "Toggle resterm" })
+keymap.set("n", "<leader>rf", resterm("open_current_file"), { desc = "Open resterm on current .http file" })
+keymap.set("n", "<leader>rk", resterm("kill"), { desc = "Quit the running resterm session" })
+
 -- CodeCompanion keymaps
 keymap.set({ "n", "v" }, "<leader>cc", "<cmd>CodeCompanionActions<CR>", { desc = "CodeCompanion actions" })
 keymap.set({ "n", "v" }, "<leader>cn", "<cmd>CodeCompanionChat<CR>", { desc = "Open CodeCompanion" })

@@ -58,6 +58,11 @@ vim.cmd([[
     aunmenu PopUp.-2-
 ]])
 
+-- Neovim detects .http out of the box but not .rest; resterm treats them
+-- identically, so give .rest the same filetype (and so the same treesitter
+-- highlighting and spell handling).
+vim.filetype.add({ extension = { rest = "http" } })
+
 -- Set up a leader key
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
