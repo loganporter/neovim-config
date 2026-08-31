@@ -149,48 +149,32 @@ keymap.set("n", "<leader>dh", "<cmd>DiffviewFileHistory<cr>", { desc = "View Rep
 keymap.set("n", "<leader>dy", "<cmd>DiffviewFileHistory %<cr>", { desc = "View file history" })
 keymap.set("n", "<leader>da", "<cmd>DiffviewOpen --all<cr>", { desc = "Open Diffview with all changes" })
 
+-- The Diffview entry points that have to ask git something first -- where this
+-- branch forked off main, what it tracks on the remote -- live in
+-- config.gitdiff. Lazy-required like the resterm bindings below.
+local function gitdiff(fn)
+  return function()
+    require("config.gitdiff")[fn]()
+  end
+end
+
 -- Diff against the merge base with the main branch: the point this branch
 -- forked off, so the diff shows only this branch's work and not the commits
 -- main has picked up since. `<leader>dm` diffs against main's current tip,
 -- which mixes those in.
-local function git(dir, ...)
-  local out = vim.system({ "git", "-C", dir, ... }, { text = true }):wait()
-  if out.code ~= 0 then return nil end
-  return vim.trim(out.stdout or "")
-end
-
-local function main_branch(dir)
-  -- Whatever origin's HEAD points at wins; it's the repo's own answer.
-  local head = git(dir, "symbolic-ref", "--quiet", "refs/remotes/origin/HEAD")
-  if head and head ~= "" then
-    return head:gsub("^refs/remotes/", "")
-  end
-  for _, ref in ipairs({ "main", "master", "origin/main", "origin/master" }) do
-    if git(dir, "rev-parse", "--verify", "--quiet", ref .. "^{commit}") then
-      return ref
-    end
-  end
-  return nil
-end
-
-keymap.set("n", "<leader>db", function()
-  local dir = vim.fn.expand("%:p:h")
-  if vim.fn.isdirectory(dir) == 0 then dir = vim.uv.cwd() end
-
-  local base_branch = main_branch(dir)
-  if not base_branch then
-    vim.notify("No main/master branch found", vim.log.levels.WARN)
-    return
-  end
-
-  local base = git(dir, "merge-base", base_branch, "HEAD")
-  if not base or base == "" then
-    vim.notify("No common ancestor with " .. base_branch, vim.log.levels.WARN)
-    return
-  end
-
-  vim.cmd("DiffviewOpen " .. base)
-end, { desc = "Open Diffview vs merge base with main" })
+keymap.set("n", "<leader>db", gitdiff("vs_main_base"), { desc = "Open Diffview vs merge base with main" })
+-- The same view of the branch on origin, for comparing against <leader>db by
+-- eye. This one stops at origin's tip; <leader>db includes uncommitted work.
+keymap.set("n", "<leader>dB", gitdiff("upstream_vs_main_base"), { desc = "Open Diffview of origin's branch off main" })
+-- Everything a push would carry: the tracked branch on origin vs the working
+-- tree. After a rebase this also shows whatever main picked up, since HEAD now
+-- sits on top of it -- <leader>dr is the one that filters that out.
+keymap.set("n", "<leader>du", gitdiff("vs_upstream"), { desc = "Open Diffview vs upstream branch" })
+-- The rebase check, in the Diffview UI: origin's series replayed onto the base
+-- HEAD now sits on, then diffed against HEAD. Sharing a base is what cancels
+-- out the commits the rebase picked up from main, leaving only what it did to
+-- your own work. Clean rebase -> nothing to show.
+keymap.set("n", "<leader>dr", gitdiff("rebase_replay"), { desc = "Diffview of rebase changes vs origin" })
 
 -- Gitsigns keymaps
 keymap.set("n", "<leader>hs", ":Gitsigns stage_hunk<CR>", { desc = "Stage hunk" })
