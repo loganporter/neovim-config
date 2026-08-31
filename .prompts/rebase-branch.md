@@ -11,7 +11,7 @@ tools:
 opts:
   alias: rebase
   is_slash_cmd: true
-  auto_submit: true
+  auto_submit: false 
 ---
 
 ## system
