@@ -10,6 +10,11 @@
 -- native notification (so it also works over SSH). Ghostty, WezTerm and foot
 -- speak it; anything else falls back to `terminal-notifier`, `osascript`
 -- (macOS) or `notify-send` (Linux).
+--
+-- A notification also stamps an icon onto the terminal title, which Ghostty
+-- (and every other tabbed terminal) uses as the tab label, so a glance across
+-- the tab bar shows which chats are waiting. The icon is cleared the moment
+-- that tab gets focus again.
 
 local M = {}
 
@@ -18,9 +23,17 @@ local opts = {
   -- Notify even when the chat buffer is focused in front of us.
   always = false,
   title = "CodeCompanion",
+  -- Stamped onto the terminal title while a chat waits; "" disables it.
+  title_icon = "🔔",
 }
 
 local focused = true
+local marked = false
+---'titlestring' as it was before we prefixed the icon, captured on first use.
+---Read lazily rather than at setup(): whoever owns the title (config/autocmds)
+---may well set it after this module loads.
+---@type string|nil
+local base_titlestring
 
 ---Neovim's stderr is wired to the terminal, so it's where escape sequences go
 ---@param seq string
@@ -83,6 +96,27 @@ local function resolve_backend()
   end
 end
 
+---Neovim rewrites the terminal title from 'titlestring' on every redraw, so
+---the icon has to live there rather than in a one-off escape sequence.
+---@param on boolean
+local function mark_title(on)
+  if marked == on or (opts.title_icon or "") == "" then
+    return
+  end
+  marked = on
+
+  if base_titlestring == nil then
+    base_titlestring = vim.o.titlestring
+    -- With 'title' off Neovim never writes the terminal title in the first place.
+    vim.o.title = true
+  end
+
+  -- An empty 'titlestring' means Neovim builds the default title itself, and
+  -- there's nothing to prefix; stand in something close while the icon is up.
+  local base = base_titlestring ~= "" and base_titlestring or "%t - nvim"
+  vim.o.titlestring = on and (opts.title_icon .. " " .. base) or base_titlestring
+end
+
 ---@param bufnr number|nil the chat buffer the event came from
 ---@return boolean
 local function watching(bufnr)
@@ -92,7 +126,17 @@ end
 ---@param body string
 ---@param bufnr number|nil
 local function notify(body, bufnr)
-  if not opts.enabled or (watching(bufnr) and not opts.always) then
+  if not opts.enabled then
+    return
+  end
+
+  -- The icon says "come back to this tab", so it's noise while that tab is
+  -- already focused -- and FocusGained, our cue to clear it, wouldn't fire.
+  if not focused then
+    mark_title(true)
+  end
+
+  if watching(bufnr) and not opts.always then
     return
   end
 
@@ -112,6 +156,7 @@ function M.setup(user_opts)
     group = group,
     callback = function()
       focused = true
+      mark_title(false)
     end,
   })
   vim.api.nvim_create_autocmd("FocusLost", {
