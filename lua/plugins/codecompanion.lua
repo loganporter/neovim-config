@@ -126,6 +126,9 @@ return {
 
     vim.opt.splitright = true
 
+    -- Desktop notification whenever a chat hands control back to us
+    require("config.codecompanion.notify").setup()
+
     -- markview can't render tables while `wrap` is on: for any table wider than
     -- ~90% of the window it bails out and leaves the raw `| ... |` markdown (see
     -- markview's renderers/markdown.lua, "BUG, wrap breaks table rendering").
