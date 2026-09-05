@@ -62,6 +62,9 @@ vim.keymap.set("n", "<A-l>", function() move_divider("right", 3) end,
   { desc = "Move split divider right (hold)", silent = true })
 vim.keymap.set("n", "<A-j>", "<Cmd>resize +2<CR>", { desc = "Grow split height (hold)", silent = true })
 vim.keymap.set("n", "<A-k>", "<Cmd>resize -2<CR>", { desc = "Shrink split height (hold)", silent = true })
+-- reset every window to an equal size (<C-w>= , which is also reachable as
+-- <leader>m= via the <leader>m -> <C-w> mapping above)
+vim.keymap.set("n", "<leader>=", "<C-w>=", { desc = "Equalize split sizes", silent = true })
 -- create a new empty buffer
 keymap.set({ "n", "v" }, "<leader>bn", ":enew<CR>", { desc = "New empty buffer" })
 keymap.set({ "n", "v" }, "<leader>bv", ":vnew<CR>", { desc = "New empty buffer in vertical split" })
