@@ -22,10 +22,15 @@ local state = {
   prev_win = nil,
 }
 
--- Markers that mean "this directory is the root of a resterm workspace".
--- resterm discovers environments relative to the workspace root, so pointing
--- it at the wrong directory silently loses your {{variables}}.
-local WORKSPACE_MARKERS = { "resterm.env.json", ".git" }
+-- resterm looks for an environment file in exactly three places: the opened
+-- file's directory, the workspace root, and the CWD. It never searches upward,
+-- so pointing it at the wrong directory silently loses your {{variables}}.
+local ENV_FILES = { "resterm.env.json", "rest-client.env.json" }
+
+-- How far below the project root to look for a requests directory holding its
+-- own environment file. Bounded because an unbounded vim.fs.find over a
+-- monorepo takes over a second; three levels costs 1-3ms.
+local ENV_SEARCH_DEPTH = 3
 
 local REQUEST_EXTENSIONS = { http = true, rest = true }
 
@@ -52,12 +57,60 @@ local function current_request_file()
   return vim.fn.fnamemodify(name, ":p")
 end
 
---- Workspace root for the current buffer: nearest ancestor holding a resterm
---- environment file or a .git dir, falling back to the cwd.
+local function has_env(dir)
+  for _, file in ipairs(ENV_FILES) do
+    if vim.uv.fs_stat(vim.fs.joinpath(dir, file)) then
+      return true
+    end
+  end
+  return false
+end
+
+--- Shallowest directory below `root` holding an environment file.
+---
+--- Nil when there is none, and also when two sit at the same depth: resterm
+--- loads one environment file per workspace and warns about the rest, so
+--- guessing between them would be worse than leaving the root alone.
+---@return string|nil
+local function env_dir_below(root)
+  local best, best_depth, tied
+  for name, type_ in vim.fs.dir(root, {
+    depth = ENV_SEARCH_DEPTH,
+    skip = function(dir) return dir ~= "node_modules" and dir:sub(1, 1) ~= "." end,
+  }) do
+    if type_ == "file" and vim.tbl_contains(ENV_FILES, vim.fs.basename(name)) then
+      local dir = vim.fs.dirname(vim.fs.joinpath(root, name))
+      local depth = select(2, name:gsub("/", ""))
+      if best_depth == nil or depth < best_depth then
+        best, best_depth, tied = dir, depth, false
+      elseif depth == best_depth and dir ~= best then
+        tied = true
+      end
+    end
+  end
+  return not tied and best or nil
+end
+
+--- Workspace root for the current buffer.
+---
+--- resterm resolves one environment file per workspace, so the root has to be
+--- the directory holding it. Nearest ancestor wins; failing that the project
+--- root, unless the requests live in a subdirectory below it with their own
+--- environment -- the usual monorepo shape, and one no upward walk can find.
 local function workspace_root()
   local name = vim.api.nvim_buf_get_name(0)
   local dir = (name ~= "" and not name:find("://")) and vim.fs.dirname(name) or vim.fn.getcwd()
-  return vim.fs.root(dir, WORKSPACE_MARKERS) or vim.fn.getcwd()
+
+  local env_root = vim.fs.root(dir, ENV_FILES)
+  if env_root then
+    return env_root
+  end
+
+  local root = vim.fs.root(dir, { ".git" }) or vim.fn.getcwd()
+  if has_env(root) then
+    return root
+  end
+  return env_dir_below(root) or root
 end
 
 local function open_float(buf)
@@ -150,7 +203,9 @@ local function start(opts)
   state.workspace = workspace
   state.win = open_float(buf)
 
-  local cmd = { "resterm", "--workspace", workspace }
+  -- --recursive: the workspace scan is flat by default, so requests kept in
+  -- subdirectories never reach the sidebar.
+  local cmd = { "resterm", "--recursive", "--workspace", workspace }
   if opts.file then
     vim.list_extend(cmd, { "--file", opts.file })
   end
