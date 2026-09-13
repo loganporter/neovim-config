@@ -34,6 +34,41 @@ local ENV_SEARCH_DEPTH = 3
 
 local REQUEST_EXTENSIONS = { http = true, rest = true }
 
+-- Credentials a request file references as `env:NAME` come from resterm's own
+-- environment, and resterm never looks for a dotenv unless told to. Launched
+-- from here, that environment is whatever nvim was started with -- so a key
+-- kept in the workspace's `.env` would be missing inside the float. These are
+-- loaded at start instead, and go only to the resterm job: they are not put on
+-- `vim.env`, so no language server or other job ever sees them.
+local DOTENV_FILES = { ".env", ".env.local" }
+
+--- Read `KEY=value` pairs from the workspace's dotenv files.
+---
+--- Deliberately plain: `export` prefixes, `#` comments and surrounding quotes
+--- are handled, `${VAR}` interpolation is not. The first file to define a key
+--- wins, and an already-exported value beats both -- the precedence every
+--- other dotenv loader uses, so a key exported for one session still overrides
+--- the file.
+---@param dir string workspace root
+---@return table<string, string>
+local function read_dotenv(dir)
+  local vars = {}
+  for _, name in ipairs(DOTENV_FILES) do
+    local fd = io.open(vim.fs.joinpath(dir, name), "r")
+    if fd then
+      for line in fd:lines() do
+        local key, value = line:gsub("^%s*export%s+", ""):match("^([%a_][%w_]*)%s*=%s*(.-)%s*$")
+        if key and vars[key] == nil and os.getenv(key) == nil then
+          local quoted = value:match('^"(.*)"$') or value:match("^'(.*)'$")
+          vars[key] = quoted or (value:gsub("%s+#.*$", ""))
+        end
+      end
+      fd:close()
+    end
+  end
+  return vars
+end
+
 --- Path to the shim handed to resterm as $EDITOR, so its `g e` opens the file
 --- back in *this* nvim instead of spawning a nested one inside the float.
 local function editor_shim()
@@ -210,7 +245,7 @@ local function start(opts)
     vim.list_extend(cmd, { "--file", opts.file })
   end
 
-  local env = {}
+  local env = read_dotenv(workspace)
   local shim = editor_shim()
   if shim then
     env.EDITOR = shim
