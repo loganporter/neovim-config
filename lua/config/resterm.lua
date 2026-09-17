@@ -257,6 +257,13 @@ local function start(opts)
     cwd = workspace,
     env = env,
     on_exit = function()
+      -- A restart stops this job and starts the next one straight away, so this
+      -- callback can land once `state` already describes the new session. Only
+      -- tear down the session this closure was created for.
+      if state.buf ~= buf then
+        vim.cmd("checktime")
+        return
+      end
       state.job = nil
       if is_win_open() then
         local win = state.win
@@ -303,6 +310,13 @@ function M.open(opts)
   end
 
   start(opts)
+end
+
+--- Quit the running instance and open a clean one in its place. Unlike
+--- `hide`/`toggle`, this deliberately drops the session's editor state,
+--- history and captured globals -- that is the point of asking for a fresh one.
+function M.restart()
+  M.open({ restart = true })
 end
 
 --- Toggle the float. Hides rather than quits -- see the note at the top.
@@ -401,6 +415,10 @@ end, { nargs = "?", bang = true, complete = "dir", desc = "Open resterm (! resta
 vim.api.nvim_create_user_command("RestermFile", function()
   M.open_current_file()
 end, { desc = "Open resterm on the current .http/.rest file" })
+
+vim.api.nvim_create_user_command("RestermRestart", function()
+  M.restart()
+end, { desc = "Quit the running resterm session and start a fresh one" })
 
 vim.api.nvim_create_user_command("RestermToggle", function()
   M.toggle()

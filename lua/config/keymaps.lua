@@ -323,6 +323,7 @@ end
 keymap.set("n", "<leader>rr", resterm("toggle"), { desc = "Toggle resterm" })
 keymap.set("n", "<leader>rf", resterm("open_current_file"), { desc = "Open resterm on current .http file" })
 keymap.set("n", "<leader>rk", resterm("kill"), { desc = "Quit the running resterm session" })
+keymap.set("n", "<leader>rn", resterm("restart"), { desc = "Restart resterm in a fresh session" })
 
 -- CodeCompanion keymaps
 keymap.set({ "n", "v" }, "<leader>cc", "<cmd>CodeCompanionActions<CR>", { desc = "CodeCompanion actions" })
