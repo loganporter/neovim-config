@@ -20,6 +20,12 @@ and lazygit
 brew install lazygit
 ```
 
+and lazydocker, opened in a float by `<leader>lc` (optional -- everything else works without it)
+
+```bash
+brew install lazydocker
+```
+
 and resterm, the terminal API client driven by `<leader>rr` (optional -- everything else works without it)
 
 ```bash

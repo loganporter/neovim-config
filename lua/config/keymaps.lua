@@ -311,6 +311,11 @@ end, { desc = "Open GitGraph for current branch" })
 -- Lazygit keymap
 keymap.set("n", "<leader>lg", "<cmd>LazyGit<CR>", { desc = "Open lazygit" })
 
+-- Lazydocker keymap. 
+keymap.set("n", "<leader>lc", function()
+  require("config.lazydocker").open()
+end, { desc = "Open lazydocker" })
+
 -- resterm keymaps. Same idea as lazygit above: an external TUI in a float.
 -- Lazy-required so the module (and its autocmd/user commands) only load on
 -- first use, matching the `pick` closures used for telescope.
