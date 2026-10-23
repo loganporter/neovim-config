@@ -337,6 +337,12 @@ keymap.set({ "n", "v" }, "<leader>ci", "<cmd>CodeCompanionCLI agent=claude<CR>",
 keymap.set({ "n", "v" }, "<leader>ct", "<cmd>CodeCompanionChat Toggle<CR>", { desc = "Toggle CodeCompanion" })
 keymap.set({ "n", "v" }, "<leader>ch", "<cmd>CodeCompanion<CR>", { desc = "Open inline CodeCompanion" })
 keymap.set("v", "<leader>ca", "<cmd>CodeCompanionChat Add<CR>", { desc = "Add visual selection to CodeCompanion" })
+keymap.set("n", "<leader>cd", function()
+  require("config.codecompanion.diagnostics").send()
+end, { desc = "Add diagnostic under cursor to CodeCompanion" })
+keymap.set("n", "<leader>cD", function()
+  require("config.codecompanion.diagnostics").send({ new_chat = true })
+end, { desc = "Send diagnostic under cursor to new CodeCompanion chat" })
 
 -- Copilot keymaps
 -- Accept suggestion
