@@ -308,6 +308,25 @@ keymap.set("n", "<leader>gb", function()
   open_gitgraph({ all = false, max_count = 5000 })
 end, { desc = "Open GitGraph for current branch" })
 
+-- Yank the branch of nvim's working directory (not the current buffer's file).
+-- Written to "+ so it reaches the system clipboard; with clipboard=unnamedplus
+-- that's also what a plain `p` pastes.
+keymap.set("n", "<leader>gy", function()
+  local result = vim.system({ "git", "branch", "--show-current" }, { cwd = vim.fn.getcwd(), text = true }):wait()
+  if result.code ~= 0 then
+    vim.notify("Not a git repository", vim.log.levels.WARN)
+    return
+  end
+  local branch = vim.trim(result.stdout)
+  -- --show-current prints nothing on a detached HEAD
+  if branch == "" then
+    vim.notify("Detached HEAD, no branch to copy", vim.log.levels.WARN)
+    return
+  end
+  vim.fn.setreg("+", branch)
+  vim.notify("Copied branch: " .. branch)
+end, { desc = "Copy current git branch name" })
+
 -- Lazygit keymap
 keymap.set("n", "<leader>lg", "<cmd>LazyGit<CR>", { desc = "Open lazygit" })
 
