@@ -19,4 +19,14 @@ function M.copy_branch()
   vim.notify("Copied branch: " .. branch)
 end
 
+-- Open GitGraph as a regular listed buffer. It comes up unlisted and flagged
+-- modified, which hides it from the buffer line and trips the "unsaved changes"
+-- prompt on quit.
+function M.open_gitgraph(args)
+  require("gitgraph").draw({}, args)
+  local buf = vim.api.nvim_get_current_buf()
+  vim.bo[buf].buflisted = true
+  vim.bo[buf].modified = false
+end
+
 return M

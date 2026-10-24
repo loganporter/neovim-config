@@ -47,7 +47,7 @@ vim.api.nvim_create_autocmd({ "BufWinEnter", "BufFilePost" }, {
   pattern = "*",
   callback = function()
     local ft = vim.bo.filetype
-    local spell_filetypes = require('config.spellcheck').filetypes
+    local spell_filetypes = require('utils.spellcheck').filetypes
     vim.opt_local.spell = vim.bo.buftype ~= "terminal" and vim.tbl_contains(spell_filetypes, ft)
   end,
 })

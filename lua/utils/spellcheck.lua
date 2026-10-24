@@ -292,4 +292,20 @@ function M.workspace(root)
   vim.schedule(process_chunk)
 end
 
+-- `zg` adds to the first entry in 'spellfile' (the git-tracked one). Swap the
+-- order for a moment so the word lands in the second, local entry instead.
+function M.add_to_local_spellfile()
+  local original_spellfile_str = vim.o.spellfile
+  local files = vim.split(original_spellfile_str, ",")
+  if #files > 1 then
+    local swapped_spellfile_str = files[2] .. "," .. files[1]
+    vim.o.spellfile = swapped_spellfile_str
+    vim.cmd("normal! zg")
+    vim.o.spellfile = original_spellfile_str
+    print("Added word to local spell file")
+  else
+    print("Local spell file not configured")
+  end
+end
+
 return M

@@ -3,7 +3,7 @@ return {
   event = { "BufReadPost", "BufNewFile", "BufWritePost" },
   config = function()
     local lint = require("lint")
-    local project = require("config.project")
+    local project = require("utils.project")
 
     -- Linters that don't depend on which JS toolchain the project uses.
     lint.linters_by_ft = {

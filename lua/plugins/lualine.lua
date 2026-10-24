@@ -3,7 +3,7 @@ return {
   event = "VeryLazy",
   dependencies = { 'nvim-tree/nvim-web-devicons' },
   config = function()
-    local codecompanion_lualine = require("config.lualine_codecompanion")
+    local codecompanion_lualine = require("utils.lualine_codecompanion")
 
     require("lualine").setup({
       options = {

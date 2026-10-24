@@ -40,100 +40,34 @@ vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to left window", silent = tr
 vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to lower window", silent = true, noremap = true })
 vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to upper window", silent = true, noremap = true })
 vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to right window", silent = true, noremap = true })
--- always move the divider left/right regardless of which pane is focused
-local function move_divider(dir, amount)
-  local has_right = vim.fn.winnr("l") ~= vim.fn.winnr()
-  -- moving right: grow current if it has a right neighbor, else shrink it (moves its left divider right)
-  -- moving left: mirror of the above
-  local sign = (dir == "right") == has_right and "+" or "-"
-  vim.cmd("vertical resize " .. sign .. amount)
-end
 -- resize splits
-vim.keymap.set("n", "<leader><Left>", function() move_divider("left", 12) end,
+local function move_divider(dir, amount)
+  return function()
+    require("utils.windows").move_divider(dir, amount)
+  end
+end
+vim.keymap.set("n", "<leader><Left>", move_divider("left", 12),
   { desc = "Move split divider left", silent = true })
-vim.keymap.set("n", "<leader><Right>", function() move_divider("right", 12) end,
+vim.keymap.set("n", "<leader><Right>", move_divider("right", 12),
   { desc = "Move split divider right", silent = true })
 vim.keymap.set("n", "<leader><Up>", "<Cmd>resize +2<CR>", { desc = "Grow split height", silent = true })
 vim.keymap.set("n", "<leader><Down>", "<Cmd>resize -2<CR>", { desc = "Shrink split height", silent = true })
 -- hold to resize continuously
-vim.keymap.set("n", "<A-h>", function() move_divider("left", 3) end,
+vim.keymap.set("n", "<A-h>", move_divider("left", 3),
   { desc = "Move split divider left (hold)", silent = true })
-vim.keymap.set("n", "<A-l>", function() move_divider("right", 3) end,
+vim.keymap.set("n", "<A-l>", move_divider("right", 3),
   { desc = "Move split divider right (hold)", silent = true })
 vim.keymap.set("n", "<A-j>", "<Cmd>resize +2<CR>", { desc = "Grow split height (hold)", silent = true })
 vim.keymap.set("n", "<A-k>", "<Cmd>resize -2<CR>", { desc = "Shrink split height (hold)", silent = true })
 -- reset every window to an equal size (<C-w>= , which is also reachable as
 -- <leader>m= via the <leader>m -> <C-w> mapping above)
 vim.keymap.set("n", "<leader>=", "<C-w>=", { desc = "Equalize split sizes", silent = true })
--- Maximize the current window's width, leaving the sidebars at their own width.
--- Bare <C-w>| takes its space from every other window, which squashes NvimTree
--- (and the symbols-outline / diffview panels) down to a sliver. Those windows
--- all set 'winfixwidth' -- which <C-w>= honours but an explicit resize does not
--- -- so restoring exactly those to the width they had gives their space back and
--- takes it out of the maximized window instead. <leader>= above puts it back.
+-- Maximize the current window's width without squashing the sidebars; see
+-- utils.windows. <leader>= above puts it back.
 -- On <leader>\ rather than <leader>| because | is shift-\, so this is the
 -- unshifted twin of the command it runs.
--- Deliberately under NvimTree's 30 columns: enough of the neighbouring split to
--- read a line's worth of context, still clearly the subordinate pane.
-local MAXIMIZE_MIN_WIDTH = 20
-local function maximize_width()
-  local current = vim.api.nvim_get_current_win()
-  -- Maximizing a sidebar is a one-way trip: <leader>= honours 'winfixwidth', so
-  -- it won't shrink the pane back afterwards and you're left with a 150-column
-  -- file tree. The keymap is for code splits.
-  if vim.wo[current].winfixwidth then
-    vim.notify("Not maximizing a fixed-width sidebar", vim.log.levels.INFO)
-    return
-  end
-  local sidebars = {}
-  -- the columns <C-w>| actually redistributes, and how many windows besides the
-  -- current one are competing for them
-  local budget, others = 0, 0
-  for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-    -- floats sit outside the split layout, so they neither lose width to
-    -- <C-w>| nor should be resized here
-    local floating = vim.api.nvim_win_get_config(win).relative ~= ""
-    if not floating then
-      if win ~= current and vim.wo[win].winfixwidth then
-        sidebars[#sidebars + 1] = { win = win, width = vim.api.nvim_win_get_width(win) }
-      else
-        budget = budget + vim.api.nvim_win_get_width(win)
-        others = others + (win ~= current and 1 or 0)
-      end
-    end
-  end
-
-  -- A narrow terminal may not have room to give every other split the full
-  -- minimum -- vim then prints E36 and leaves the layout half-resized. Capping
-  -- at an equal share keeps it satisfiable, and is no loss: an equal share is
-  -- what <leader>= would hand out anyway.
-  local min_width = MAXIMIZE_MIN_WIDTH
-  if others > 0 then
-    min_width = math.max(1, math.min(min_width, math.floor(budget / (others + 1))))
-  end
-
-  -- 'winminwidth' is a hard floor for every window that isn't the current one,
-  -- so <C-w>| stops short of squashing the others to a single column. Set only
-  -- for the resize -- left on, it would also block <A-h>/<A-l> from dragging a
-  -- divider past that point. 'winwidth' has to move with it: vim rejects a
-  -- 'winminwidth' above it (E592).
-  local saved_min, saved_win = vim.o.winminwidth, vim.o.winwidth
-  vim.o.winwidth = math.max(saved_win, min_width)
-  vim.o.winminwidth = min_width
-  local ok = pcall(vim.cmd, "wincmd |")
-  vim.o.winminwidth = saved_min
-  vim.o.winwidth = saved_win
-  if not ok then
-    vim.cmd("wincmd |")
-  end
-
-  for _, sidebar in ipairs(sidebars) do
-    if vim.api.nvim_win_is_valid(sidebar.win) then
-      vim.api.nvim_win_set_width(sidebar.win, sidebar.width)
-    end
-  end
-end
-vim.keymap.set("n", "<leader>\\", maximize_width, { desc = "Maximize split width", silent = true })
+vim.keymap.set("n", "<leader>\\", function() require("utils.windows").maximize_width() end,
+  { desc = "Maximize split width", silent = true })
 -- create a new empty buffer
 keymap.set({ "n", "v" }, "<leader>bn", ":enew<CR>", { desc = "New empty buffer" })
 keymap.set({ "n", "v" }, "<leader>bv", ":vnew<CR>", { desc = "New empty buffer in vertical split" })
@@ -159,17 +93,7 @@ keymap.set("n", "<leader>ss", "z=", { desc = "Spell suggestions" })
 keymap.set("n", "<leader>sa", "zg", { desc = "Add word to git spell file" })
 -- add word to local spell file
 keymap.set("n", "<leader>sl", function()
-  local original_spellfile_str = vim.o.spellfile
-  local files = vim.split(original_spellfile_str, ",")
-  if #files > 1 then
-    local swapped_spellfile_str = files[2] .. "," .. files[1]
-    vim.o.spellfile = swapped_spellfile_str
-    vim.cmd("normal! zg")
-    vim.o.spellfile = original_spellfile_str
-    print("Added word to local spell file")
-  else
-    print("Local spell file not configured")
-  end
+  require("utils.spellcheck").add_to_local_spellfile()
 end, { desc = "Add word to local spell file" })
 -- Jump between misspellings. Remapped onto the capital-S variants, which stop
 -- only on SpellBad. Bare `]s`/`[s` also stop on SpellRare/SpellLocal/SpellCap,
@@ -223,10 +147,10 @@ keymap.set("n", "<leader>da", "<cmd>DiffviewOpen --all<cr>", { desc = "Open Diff
 
 -- The Diffview entry points that have to ask git something first -- where this
 -- branch forked off main, what it tracks on the remote -- live in
--- config.gitdiff. Lazy-required like the resterm bindings below.
+-- utils.gitdiff. Lazy-required like the resterm bindings below.
 local function gitdiff(fn)
   return function()
-    require("config.gitdiff")[fn]()
+    require("utils.gitdiff")[fn]()
   end
 end
 
@@ -280,7 +204,7 @@ keymap.set('n', '<leader>fo', pick('commands'), { desc = "Commands" })
 -- LSP related Telescope keymaps
 keymap.set('n', '<leader>fe', pick('diagnostics'), { desc = "Diagnostics" })
 keymap.set('n', '<leader>fs', function()
-  require("config.spellcheck").workspace()
+  require("utils.spellcheck").workspace()
 end, { desc = "Spelling errors (workspace)" })
 keymap.set('n', '<leader>fr', pick('lsp_references'), { desc = "LSP references" })
 keymap.set('n', '<leader>fi', pick('lsp_implementations'), { desc = "LSP implementations" })
@@ -294,18 +218,11 @@ keymap.set("n", "<leader>cq", "<cmd>cclose<CR>", { desc = "Close quickfix list" 
 keymap.set("n", "<leader>cl", "<cmd>lclose<CR>", { desc = "Close location list" })
 
 -- GitGraph keymaps
-local function open_gitgraph(args)
-  require("gitgraph").draw({}, args)
-  local buf = vim.api.nvim_get_current_buf()
-  vim.bo[buf].buflisted = true
-  vim.bo[buf].modified = false
-end
-
 keymap.set("n", "<leader>gg", function()
-  open_gitgraph({ all = true, max_count = 5000 })
+  require("utils.git_helpers").open_gitgraph({ all = true, max_count = 5000 })
 end, { desc = "Open GitGraph" })
 keymap.set("n", "<leader>gb", function()
-  open_gitgraph({ all = false, max_count = 5000 })
+  require("utils.git_helpers").open_gitgraph({ all = false, max_count = 5000 })
 end, { desc = "Open GitGraph for current branch" })
 
 -- Git helpers live in utils.git_helpers, lazy-required on first use.
@@ -318,7 +235,7 @@ keymap.set("n", "<leader>lg", "<cmd>LazyGit<CR>", { desc = "Open lazygit" })
 
 -- Lazydocker keymap. 
 keymap.set("n", "<leader>lc", function()
-  require("config.lazydocker").open()
+  require("utils.lazydocker").open()
 end, { desc = "Open lazydocker" })
 
 -- resterm keymaps. Same idea as lazygit above: an external TUI in a float.
@@ -326,7 +243,7 @@ end, { desc = "Open lazydocker" })
 -- first use, matching the `pick` closures used for telescope.
 local function resterm(fn)
   return function()
-    require("config.resterm")[fn]()
+    require("utils.resterm")[fn]()
   end
 end
 
@@ -343,10 +260,10 @@ keymap.set({ "n", "v" }, "<leader>ct", "<cmd>CodeCompanionChat Toggle<CR>", { de
 keymap.set({ "n", "v" }, "<leader>ch", "<cmd>CodeCompanion<CR>", { desc = "Open inline CodeCompanion" })
 keymap.set("v", "<leader>ca", "<cmd>CodeCompanionChat Add<CR>", { desc = "Add visual selection to CodeCompanion" })
 keymap.set("n", "<leader>cd", function()
-  require("config.codecompanion.diagnostics").send()
+  require("utils.codecompanion.diagnostics").send()
 end, { desc = "Add diagnostic under cursor to CodeCompanion" })
 keymap.set("n", "<leader>cD", function()
-  require("config.codecompanion.diagnostics").send({ new_chat = true })
+  require("utils.codecompanion.diagnostics").send({ new_chat = true })
 end, { desc = "Send diagnostic under cursor to new CodeCompanion chat" })
 
 -- Copilot keymaps
@@ -359,34 +276,9 @@ keymap.set("i", "<C-l>", '<Plug>(copilot-accept-word)')
 vim.cmd([[cab cc CodeCompanion]])
 
 -- Keymaps for search and replace with visual selection
-_G.VisualOperation = function(op)
-  -- Yanking to grab the selection clobbers the unnamed register, so stash and
-  -- restore it -- otherwise searching for a selection silently destroys
-  -- whatever you last yanked.
-  local saved = vim.fn.getreginfo('"')
-  vim.cmd('normal! gvy')
-  local text = vim.fn.getreg('"')
-  vim.fn.setreg('"', saved)
-  if text == '' then
-    return
-  end
-  -- `\V` (very-nomagic) makes everything after it literal except `\` itself, so
-  -- only the backslash and the `/` delimiter need escaping. Without it the
-  -- selection was interpreted as a regex: selecting `foo.bar[1]` searched for
-  -- the pattern `foo.bar[1]`, matching `fooxbar1` and not the literal text.
-  local escaped_text = '\\V' .. vim.fn.escape(text, '/\\')
-  if op == 'search' then
-    vim.cmd('normal! /' .. escaped_text .. '\r')
-  elseif op == 'replace' then -- only replaces the first occurrence
-    vim.api.nvim_feedkeys(":%s/" .. escaped_text .. "/", "n", false)
-  elseif op == 'replace_all' then
-    vim.api.nvim_feedkeys(":%s/" .. escaped_text .. "//g", "n", false)
-  end
-end
-
-keymap.set("v", "<leader>f", ":<C-u>lua _G.VisualOperation('search')<CR>",
+keymap.set("v", "<leader>f", ":<C-u>lua require('utils.visual').operation('search')<CR>",
   { desc = "Search for visual selection", noremap = true, silent = true })
-keymap.set("v", "<leader>r", ":<C-u>lua _G.VisualOperation('replace_all')<CR>",
+keymap.set("v", "<leader>r", ":<C-u>lua require('utils.visual').operation('replace_all')<CR>",
   { desc = "Find and replace all for visual selection", noremap = true, silent = true })
 
 -- UFO keymaps (deferred require, as with telescope above)

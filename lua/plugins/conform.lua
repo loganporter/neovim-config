@@ -3,7 +3,7 @@ return {
   event = { "BufWritePre" },
   cmd = { "ConformInfo" },
   opts = function()
-    local project = require("config.project")
+    local project = require("utils.project")
 
     -- Resolved per buffer (conform calls this with the bufnr on every format),
     -- so a Biome package and a Prettier package can be open side by side.
