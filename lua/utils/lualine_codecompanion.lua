@@ -3,19 +3,18 @@ local M = require("lualine.component"):extend()
 M.processing = false
 M.spinner_index = 1
 
+-- 3-dot snake around the full height of the braille cell so it sits vertically centered
 local spinner_symbols = {
-  "⠋",
   "⠙",
-  "⠹",
   "⠸",
-  "⠼",
-  "⠴",
-  "⠦",
-  "⠧",
+  "⢰",
+  "⣠",
+  "⣄",
+  "⡆",
   "⠇",
-  "⠏",
+  "⠋",
 }
-local spinner_symbols_len = 10
+local spinner_symbols_len = #spinner_symbols
 
 -- Initializer
 function M:init(options)
