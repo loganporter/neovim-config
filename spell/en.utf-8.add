@@ -618,3 +618,5 @@ stringifies
 autoscaling
 unencoded
 CIDR
+tf
+hcl
