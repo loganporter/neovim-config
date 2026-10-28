@@ -116,6 +116,14 @@ return {
         },
         cli = cli,
       },
+      display = {
+        chat = {
+          window = {
+            layout = "buffer", -- open chats in the current window instead of a split
+            buflisted = true,  -- show chats in bufferline alongside files/terminals
+          },
+        },
+      },
       mcp = {
         servers = mcp_servers,
         opts = {

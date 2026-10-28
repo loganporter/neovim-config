@@ -621,3 +621,7 @@ CIDR
 tf
 hcl
 cpu
+codegen
+Biome's
+kysely
+bufferline
