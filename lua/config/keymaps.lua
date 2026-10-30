@@ -30,6 +30,24 @@ keymap.set("n", "<leader>bco", "<Cmd>BufferLineCloseOthers<CR>", { desc = "Close
 keymap.set("n", "<leader>bcl", "<Cmd>BufferLineCloseLeft<CR>", { desc = "Close buffers to the left" })
 -- Close buffers to the right
 keymap.set("n", "<leader>bcr", "<Cmd>BufferLineCloseRight<CR>", { desc = "Close buffers to the right" })
+-- Close all file buffers, leaving terminals, CodeCompanion chats and other
+-- special buffers (anything with a non-empty buftype) open. Modified buffers
+-- are skipped rather than force-closed.
+keymap.set("n", "<leader>bcf", function()
+  local skipped = 0
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.bo[buf].buflisted and vim.bo[buf].buftype == "" and vim.bo[buf].filetype ~= "codecompanion" then
+      if vim.bo[buf].modified then
+        skipped = skipped + 1
+      else
+        vim.cmd.bdelete(buf)
+      end
+    end
+  end
+  if skipped > 0 then
+    vim.notify(("Skipped %d modified buffer(s)"):format(skipped), vim.log.levels.WARN)
+  end
+end, { desc = "Close all file buffers" })
 -- Sort buffers by directory
 keymap.set("n", "<leader>bsd", "<Cmd>BufferLineSortByDirectory<CR>", { desc = "Sort buffers by directory" })
 -- Sort buffers by extension
