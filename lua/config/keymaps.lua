@@ -255,7 +255,10 @@ keymap.set("n", "<leader>rn", resterm("restart"), { desc = "Restart resterm in a
 -- CodeCompanion keymaps
 keymap.set({ "n", "v" }, "<leader>cc", "<cmd>CodeCompanionActions<CR>", { desc = "CodeCompanion actions" })
 keymap.set({ "n", "v" }, "<leader>cn", "<cmd>CodeCompanionChat<CR>", { desc = "Open CodeCompanion" })
-keymap.set({ "n", "v" }, "<leader>ci", "<cmd>CodeCompanionCLI agent=claude<CR>", { desc = "Open Claude Code (CLI)" })
+keymap.set({ "n", "v" }, "<leader>cv", function()
+  require("codecompanion").chat({ window_opts = { layout = "vertical" } })
+end, { desc = "Open CodeCompanion in vertical split" })
+keymap.set({ "n", "v" }, "<leader>ci","<cmd>CodeCompanionCLI agent=claude<CR>", { desc = "Open Claude Code (CLI)" })
 keymap.set({ "n", "v" }, "<leader>ct", "<cmd>CodeCompanionChat Toggle<CR>", { desc = "Toggle CodeCompanion" })
 keymap.set({ "n", "v" }, "<leader>ch", "<cmd>CodeCompanion<CR>", { desc = "Open inline CodeCompanion" })
 keymap.set("v", "<leader>ca", "<cmd>CodeCompanionChat Add<CR>", { desc = "Add visual selection to CodeCompanion" })
