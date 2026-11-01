@@ -63,6 +63,11 @@ vim.cmd([[
 -- highlighting and spell handling).
 vim.filetype.add({ extension = { rest = "http" } })
 
+-- Forgive a held Shift when quitting: `:Qa` (and `:Qa!`) behave like `:qa`.
+vim.api.nvim_create_user_command("Qa", function(opts)
+  vim.cmd.qall({ bang = opts.bang })
+end, { bang = true })
+
 -- Set up a leader key
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
