@@ -60,20 +60,20 @@ Rules:
 
 ## Output format
 
-Open with two or three sentences: what the branch does, the base it was compared
-against, and your overall read.
+Be very concise. The user will ask follow-up questions if they want more
+detail, so leave out background, explanations of obvious points, and hedging.
 
-Then a numbered list of comments. Each comment is one issue and follows
+Open with one sentence: the base you compared against and your overall read.
+
+Then a single numbered list of comments, with no headings, separators, or
+other text between items. Each comment is one issue and follows
 [conventional comments](https://conventionalcomments.org):
 
 ```
-### N. `path/to/file.ext:LINE`
-
-**<label>(<decoration>):** <one-line subject>
-
-<discussion: why it matters, and a concrete suggested fix>
+N. **<label>(<decoration>):** `path/to/file.ext:LINE` — <what is wrong and the fix>
 ```
 
+- Each comment is at most two sentences: the problem and the concrete fix.
 - Number comments sequentially from 1, ordered most to least important.
 - `<label>` is one of: `praise`, `nitpick`, `suggestion`, `issue`, `todo`,
   `question`, `thought`, `chore`, `note`.
@@ -81,10 +81,11 @@ Then a numbered list of comments. Each comment is one issue and follows
   `if-minor`. Omit the parentheses entirely when there is no decoration.
 - Mark anything that should stop a merge as `blocking`. Mark opinions and
   polish as `non-blocking` so the author can triage at a glance.
-- Include a short code block with the concrete fix when the change is small.
+- Use an inline code span for a fix only if it fits on one line. No code
+  blocks.
 
-Close with a **Verdict** line: approve, approve with comments, or request
-changes — and the one thing to fix first.
+Close with a single **Verdict** line after the list: approve, approve with
+comments, or request changes.
 
 ## user
 
