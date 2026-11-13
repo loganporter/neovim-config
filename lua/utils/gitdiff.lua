@@ -136,9 +136,9 @@ end
 local REPLAY_REF = "refs/nvim-gitdiff/replayed"
 
 --- Rebase `rev`'s commits since `old_base` onto `new_base` in a scratch
---- worktree. Returns the ref holding the result, or nil if the replay hit a
---- conflict -- which is its own answer: the rebase being checked resolved
---- something here, so there is no clean series to compare against.
+--- worktree. Returns the ref holding the result, or nil if git couldn't
+--- produce one. Conflicts are committed with their markers left in, so the
+--- diff against HEAD shows how the real rebase resolved them.
 local function replay(dir, rev, old_base, new_base)
   local tree = vim.fn.tempname()
   if not git(dir, "worktree", "add", "--detach", tree, rev) then
@@ -146,14 +146,43 @@ local function replay(dir, rev, old_base, new_base)
     return nil
   end
 
-  local out = vim.system({
-    "git", "-C", tree,
-    -- Nothing here is a real rebase of a real branch: don't fire the repo's
-    -- post-rewrite hooks over it, and don't go asking for a signing key.
-    "-c", "core.hooksPath=/dev/null",
-    "-c", "commit.gpgsign=false",
-    "rebase", "--onto", new_base, old_base,
-  }, { text = true }):wait()
+  local function rebase(...)
+    return vim.system({
+      "git", "-C", tree,
+      -- Nothing here is a real rebase of a real branch: don't fire the repo's
+      -- post-rewrite hooks over it, don't go asking for a signing key, and
+      -- don't open an editor for the message on --continue.
+      "-c", "core.hooksPath=/dev/null",
+      "-c", "commit.gpgsign=false",
+      "-c", "core.editor=true",
+      "rebase", ...,
+    }, { text = true, env = { GIT_EDITOR = "true" } }):wait()
+  end
+
+  -- A conflict here is the interesting case, not a failure: it's the same
+  -- conflict the rebase being checked had to resolve. Commit it as it stands,
+  -- markers and all, and carry on -- diffing that against HEAD then shows
+  -- exactly how each conflict was resolved. Bounded, in case git wedges.
+  local out = rebase("--onto", new_base, old_base)
+  local conflicted = {}
+  for _ = 1, 500 do
+    if out.code == 0 then
+      break
+    end
+    local unmerged = git(tree, "diff", "--name-only", "--diff-filter=U")
+    if not unmerged then
+      break
+    end
+    for _, path in ipairs(vim.split(unmerged, "\n", { trimempty = true })) do
+      conflicted[path] = true
+    end
+    git(tree, "add", "-A")
+    out = rebase("--continue")
+    if out.code ~= 0 and git(tree, "diff", "--cached", "--quiet") then
+      -- Nothing left to commit for this step (it ended up empty): drop it.
+      out = rebase("--skip")
+    end
+  end
 
   local head = out.code == 0 and git(tree, "rev-parse", "HEAD") or nil
   if head then
@@ -168,23 +197,22 @@ local function replay(dir, rev, old_base, new_base)
   git(dir, "worktree", "prune")
 
   if not head then
-    -- git's hints here explain how to resolve and continue the rebase, in a
-    -- worktree that's just been deleted. Keep the reason, drop the advice.
-    local why = {}
-    for _, line in ipairs(vim.split(out.stderr or "", "\n", { trimempty = true })) do
-      -- Progress ("Rebasing (1/2)") is written over itself with CRs; the last
-      -- segment of the line is the part that survived on screen.
-      line = vim.trim(line:gsub(".*\r", ""))
-      if line ~= "" and not line:match("^hint:") and not line:match("^Rebasing %(") then
-        table.insert(why, line)
-      end
-    end
     vim.notify(
-      ("Replaying %s onto HEAD's base hit a conflict; `git range-diff %s...HEAD` still works.\n%s")
-        :format(rev, rev, table.concat(why, "\n")),
+      ("Could not replay %s onto HEAD's base; `git range-diff %s...HEAD` still works.\n%s")
+        :format(rev, rev, vim.trim(out.stderr or "")),
       vim.log.levels.ERROR
     )
     return nil
+  end
+
+  local paths = vim.tbl_keys(conflicted)
+  if #paths > 0 then
+    table.sort(paths)
+    vim.notify(
+      ("Replay conflicted in %d file(s); the left side keeps the conflict markers, so the diff shows how each was resolved:\n  %s")
+        :format(#paths, table.concat(paths, "\n  ")),
+      vim.log.levels.WARN
+    )
   end
   return REPLAY_REF
 end
@@ -199,8 +227,7 @@ end
 --- nothing.
 ---
 --- Cumulative, not per commit: this says what changed, not which commit
---- changed it. `git range-diff` is the per-commit answer when that matters,
---- and the fallback when the replay itself conflicts.
+--- changed it. `git range-diff` is the per-commit answer when that matters.
 function M.rebase_replay()
   local dir = repo_dir()
   local main = need_main(dir)
